@@ -1,0 +1,2 @@
+class NatureModule:
+    pass
