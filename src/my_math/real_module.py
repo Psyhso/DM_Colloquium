@@ -15,3 +15,10 @@ class RealModule:
         self.C = new_C
         self.m += k
         return self
+    
+    def LED_P_Q(self):
+        """
+        Водолазко 4384
+        Возвращает старший коэффициент полинома
+        """
+        return self.C[0]
