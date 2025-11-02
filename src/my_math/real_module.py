@@ -1,4 +1,5 @@
 class RealModule:
+
     def __init__(self, m : int, C : list):
         self.m = m
         self.C = C
@@ -22,3 +23,11 @@ class RealModule:
         Возвращает старший коэффициент полинома
         """
         return self.C[0]
+    
+    def DEG_P_N(self):
+        """
+        Шакуров 4384 
+        Возвращает степень многочлена (количество коэффициентов - 1)
+        """
+        return len(self.C) - 1
+
