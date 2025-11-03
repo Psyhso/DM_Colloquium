@@ -36,14 +36,10 @@ def test_LED_P_Q(polinom, expected):
     print(expected)
     assert (res == expected)
 
-<<<<<<< HEAD
-""""ТЕСТЫ АЛЬБЕРТА"""
-=======
+
 
 """Тесты Альберта"""
 
-
->>>>>>> main
 @pytest.mark.parametrize("polinom, expected", [
     (RealModule(1, [10, 5]), 1),
     (RealModule(3, [24, 5, 0, 2]), 3),
