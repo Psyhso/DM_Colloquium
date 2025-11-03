@@ -1,0 +1,2 @@
+import pytest
+from my_math.integer_module import IntegerModule
