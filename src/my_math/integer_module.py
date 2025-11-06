@@ -1,8 +1,8 @@
 class IntegerModule:
-    def __init__(self, b, n, A):
-        self.b = b # знак числа (1 - минус, 0 - плюс)
-        self.n = n # номер старшей позиции
-        self.A = A # массив цифр
+    def __init__(self, b: int, n: int, A: list):
+        self.b = b  # знак числа (1 - минус, 0 - плюс)
+        self.n = n  # номер старшей позиции
+        self.A = A  # массив цифр
 
     def ABS_Z_Z(self):
         """
@@ -14,25 +14,25 @@ class IntegerModule:
             self.b = 0
         return self
 
-    def POZ_Z_D(self):
+    def POZ_Z_D(self) -> int:
         """
         Овчаренко 4384
 
         Алгоритм: проверяем, является ли число нулем (все цифры равны 0), затем смотрим знак.
         """
         # Проверяем, является ли число нулем
-        is_zero = 1
+        is_zero = True
         for el in self.A:
             if el != 0:
-                is_zero = 0
+                is_zero = False
                 break
 
         if is_zero:
             return 0
         elif self.b:
-            return 1
+            return -1
         else:
-            return 2
+            return 1
 
     def MUL_ZM_Z(self):
         """
@@ -40,11 +40,20 @@ class IntegerModule:
 
         Алгоритм: меняем знак числа на противоположный.
         Если число было положительным - становится отрицательным и наоборот.
+        Если число является нулём - возвращаем само число.
         """
-        self.b = 1 - self.b
+        # Проверяем, является ли число нулем
+        is_zero = True
+        for el in self.A:
+            if el != 0:
+                is_zero = False
+                break
+
+        if not is_zero:
+            self.b = 1 - self.b
         return self
 
-    def TRANS_N_Z(self, n, A):
+    def TRANS_N_Z(self, n: int, A: list):
         """
         Овчаренко 4384
 
@@ -58,7 +67,7 @@ class IntegerModule:
         self.A = A
         return self
 
-    def TRANS_Z_N(self):
+    def TRANS_Z_N(self) -> tuple:
         """
         Овчаренко 4384
 
@@ -66,4 +75,4 @@ class IntegerModule:
         """
         if self.b:
             raise ValueError("Отрицательное число не подходит для преобразования в натуральное")
-        return self.n, self.A
+        return (self.n, self.A)
