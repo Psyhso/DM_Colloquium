@@ -175,6 +175,8 @@ class NaturalModule:
         
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект)
+
+        Использование в других методах: 1
         """
         # Используем метод умножения столбиком
         result_A = [0] * (self.n + other.n + 2)
@@ -244,25 +246,37 @@ class NaturalModule:
         quotient_A = []
         remainder = NaturalModule(0, [0])
         
-        # Процесс длинного деления: проходим по цифрам делимого от старшей к младшей
+        # Процесс длинного деления
         for i in range(self.n, -1, -1):
-            # Приписываем следующую цифру делимого к остатку
-            remainder.MUL_Nk_N(1)
+            # Сдвигаем остаток влево и добавляем следующую цифру
+            if not (remainder.n == 0 and remainder.A[0] == 0):
+                remainder.MUL_Nk_N(1)
             remainder.A[0] = self.A[i]
             
-            # Находим цифру частного
-            d, k = remainder.DIV_NN_Dk(other)
+            # Обновляем n для остатка
+            while len(remainder.A) > 1 and remainder.A[-1] == 0:
+                remainder.A.pop()
+            remainder.n = len(remainder.A) - 1
+            
+            # Находим максимальную цифру d
+            d = 0
+            for test_d in range(9, -1, -1):
+                temp = NaturalModule(other.n, other.A.copy())
+                temp.MUL_ND_N(test_d)
+                if temp.COM_NN_D(remainder) != 2:  # temp <= remainder
+                    d = test_d
+                    break
+            
             quotient_A.append(d)
             
-            # Вычитаем d * other * 10^k из остатка
+            # Вычитаем d * other из остатка
             if d > 0:
                 temp = NaturalModule(other.n, other.A.copy())
                 temp.MUL_ND_N(d)
-                temp.MUL_Nk_N(k)
                 remainder.SUB_NN_N(temp)
         
         quotient_A.reverse()
-        
+    
         # Удаляем ведущие нули
         while len(quotient_A) > 1 and quotient_A[-1] == 0:
             quotient_A.pop()
@@ -294,6 +308,8 @@ class NaturalModule:
         
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект) - НОД
+
+        Использование в других методах: 1
         """
         # Алгоритм Евклида: НОД(a,b) = НОД(b, a mod b)
         while other.NZER_N_B():
@@ -308,3 +324,20 @@ class NaturalModule:
         
         return self
 
+    def LCM_NN_N(self, other):
+        """
+        Водолазко 4384
+
+        Принимает на вход: другое натуральное число (other)
+        Возвращает: res - НОК
+        """
+        other_1 = NaturalModule(other.n, other.A)
+        # Формула связи НОК и НОД: НОК(a,b) = (a*b)/НОД(a,b)
+        temp = NaturalModule(self.n, self.A.copy())
+        temp.GCF_NN_N(other)  # temp = НОД(a,b)
+
+        self.MUL_NN_N(other_1)  # self = a * b        
+
+        self.DIV_NN_N(temp)  # self = (a*b) / НОД(a,b)
+
+        return self
