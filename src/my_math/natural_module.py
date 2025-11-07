@@ -1,4 +1,5 @@
 class NaturalModule:
+
     def __init__(self, n: int, A: list):
         """
         Инициализация натурального числа.
@@ -58,12 +59,10 @@ class NaturalModule:
             else:
                 self.A[i] = 0
                 carry = 1
-        
         # Если остался перенос, добавляем новую цифру
         if carry == 1:
             self.A.append(1)
             self.n += 1
-        
         return self
     
     def MUL_ND_N(self, d: int):
@@ -91,7 +90,6 @@ class NaturalModule:
         while carry > 0:
             new_A.append(carry % 10)
             carry = carry // 10
-        
         self.A = new_A
         self.n = len(new_A) - 1
         return self
@@ -309,9 +307,4 @@ class NaturalModule:
             other.A = remainder.A.copy()
         
         return self
-
-
-
-
-
 

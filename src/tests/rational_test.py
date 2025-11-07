@@ -1,0 +1,2 @@
+import pytest
+from my_math.rational_module import RationalModule

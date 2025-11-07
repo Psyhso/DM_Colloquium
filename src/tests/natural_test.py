@@ -1,0 +1,2 @@
+import pytest
+from my_math.natural_module import NatureModule
