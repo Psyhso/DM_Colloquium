@@ -244,25 +244,37 @@ class NaturalModule:
         quotient_A = []
         remainder = NaturalModule(0, [0])
         
-        # Процесс длинного деления: проходим по цифрам делимого от старшей к младшей
+        # Процесс длинного деления
         for i in range(self.n, -1, -1):
-            # Приписываем следующую цифру делимого к остатку
-            remainder.MUL_Nk_N(1)
+            # Сдвигаем остаток влево и добавляем следующую цифру
+            if not (remainder.n == 0 and remainder.A[0] == 0):
+                remainder.MUL_Nk_N(1)
             remainder.A[0] = self.A[i]
             
-            # Находим цифру частного
-            d, k = remainder.DIV_NN_Dk(other)
+            # Обновляем n для остатка
+            while len(remainder.A) > 1 and remainder.A[-1] == 0:
+                remainder.A.pop()
+            remainder.n = len(remainder.A) - 1
+            
+            # Находим максимальную цифру d
+            d = 0
+            for test_d in range(9, -1, -1):
+                temp = NaturalModule(other.n, other.A.copy())
+                temp.MUL_ND_N(test_d)
+                if temp.COM_NN_D(remainder) != 2:  # temp <= remainder
+                    d = test_d
+                    break
+            
             quotient_A.append(d)
             
-            # Вычитаем d * other * 10^k из остатка
+            # Вычитаем d * other из остатка
             if d > 0:
                 temp = NaturalModule(other.n, other.A.copy())
                 temp.MUL_ND_N(d)
-                temp.MUL_Nk_N(k)
                 remainder.SUB_NN_N(temp)
         
         quotient_A.reverse()
-        
+    
         # Удаляем ведущие нули
         while len(quotient_A) > 1 and quotient_A[-1] == 0:
             quotient_A.pop()
@@ -308,3 +320,5 @@ class NaturalModule:
         
         return self
 
+    def __str__(self):
+        return "".join([str(i) for i in self.A])[::-1]
