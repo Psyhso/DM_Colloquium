@@ -324,6 +324,7 @@ class NaturalModule:
         
         return self
 
+
     def LCM_NN_N(self, other):
         """
         Водолазко 4384
@@ -341,3 +342,6 @@ class NaturalModule:
         self.DIV_NN_N(temp)  # self = (a*b) / НОД(a,b)
 
         return self
+
+    def __str__(self):
+        return "".join([str(i) for i in self.A])[::-1]
