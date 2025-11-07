@@ -175,6 +175,8 @@ class NaturalModule:
         
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект)
+
+        Использование в других методах: 1
         """
         # Используем метод умножения столбиком
         result_A = [0] * (self.n + other.n + 2)
@@ -306,6 +308,8 @@ class NaturalModule:
         
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект) - НОД
+
+        Использование в других методах: 1
         """
         # Алгоритм Евклида: НОД(a,b) = НОД(b, a mod b)
         while other.NZER_N_B():
@@ -318,6 +322,25 @@ class NaturalModule:
             other.n = remainder.n
             other.A = remainder.A.copy()
         
+        return self
+
+
+    def LCM_NN_N(self, other):
+        """
+        Водолазко 4384
+
+        Принимает на вход: другое натуральное число (other)
+        Возвращает: res - НОК
+        """
+        other_1 = NaturalModule(other.n, other.A)
+        # Формула связи НОК и НОД: НОК(a,b) = (a*b)/НОД(a,b)
+        temp = NaturalModule(self.n, self.A.copy())
+        temp.GCF_NN_N(other)  # temp = НОД(a,b)
+
+        self.MUL_NN_N(other_1)  # self = a * b        
+
+        self.DIV_NN_N(temp)  # self = (a*b) / НОД(a,b)
+
         return self
 
     def __str__(self):
