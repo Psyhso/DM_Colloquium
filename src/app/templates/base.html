@@ -1,0 +1,123 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+Colloq4384 - Система компьютерной алгебры
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #e74c3c;
+        --bg-light: #f8f9fa;
+        --border-radius: 8px;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .main-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .module-nav {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .module-nav .nav-pills .nav-link {
+        color: var(--primary-color);
+        margin: 0 5px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .module-nav .nav-pills .nav-link:hover {
+        background-color: #e9ecef;
+    }
+    
+    .module-nav .nav-pills .nav-link.active {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+    
+    .content-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .page-title {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid var(--secondary-color);
+    }
+    
+    .alert {
+        border-radius: 5px;
+        border: none;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <!-- Навигация между модулями -->
+    <div class="module-nav">
+        <ul class="nav nav-pills justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'natural' else '' }}" href="{{ url_for('natural') }}">
+                    <i class="bi bi-123"></i> Натуральные числа
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'integer' else '' }}" href="{{ url_for('integer') }}">
+                    <i class="bi bi-plus-slash-minus"></i> Целые числа
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'rational' else '' }}" href="{{ url_for('rational') }}">
+                    <i class="bi bi-slash-square"></i> Рациональные числа
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'polynomial' else '' }}" href="{{ url_for('polynomial') }}">
+                    <i class="bi bi-graph-up"></i> Полиномы
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Сообщения -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Основной контент -->
+    <div class="content-card">
+        {% block sub_content %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
