@@ -5,18 +5,19 @@
     <i class="bi bi-calculator"></i> Операции над натуральными числами
 </h1>
 
-<div class="row">
+<!-- gap добавляет расстояние между колонками -->
+<div class="row" style="align-items: flex-start; gap: 2rem;">
     <!-- ЛЕВАЯ КОЛОНКА: Форма ввода -->
     <div class="col-md-5">
-        <div class="input-section">
-            <h4 class="mb-3">
+        <div class="input-section" style="margin-bottom: 1.5rem;">
+            <!-- Заголовок с фиксированной высотой -->
+            <h4 class="mb-3" style="height: 2.5rem; display: flex; align-items: center;">
                 <i class="bi bi-pencil-square"></i> Ввод выражения
             </h4>
             
             <!-- Форма ввода -->
             <form method="POST" id="mathForm">
                 <div class="mb-3">
-                    <label for="math_exp" class="form-label fw-bold">Математическое выражение</label>
                     <textarea 
                         class="form-control form-control-lg" 
                         id="math_exp" 
@@ -29,59 +30,56 @@
                     ></textarea>
                 </div>
                 
-                <button class="btn btn-primary btn-lg w-100 mb-3" type="submit">
+                <!-- Добавляем margin-top для отступа между формой и кнопкой -->
+                <button class="btn btn-primary btn-lg w-100" type="submit" style="margin-top: 1.5rem;">
                     <i class="bi bi-calculator-fill"></i> Вычислить
                 </button>
             </form>
-            
-            <!-- Подсказки по доступным операциям -->
-            <div class="operations-help">
-                <button class="btn btn-sm btn-outline-secondary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#operationsCollapse">
-                    <i class="bi bi-question-circle"></i> Доступные операции
-                </button>
+
+        </div>
+        
+        <!-- ИНФОРМАЦИЯ О ДОСТУПНЫХ ОПЕРАЦИЯХ -->
+        <div class="card" style="background-color: #f0f7ff; border: 2px solid #3498db; border-radius: 8px;">
+            <div class="card-header" style="background-color: #3498db; color: white; border-radius: 6px 6px 0 0;">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightbulb-fill"></i> Доступные операции
+                </h6>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-2" style="color: #2c3e50;">Арифметические:</h6>
+                <ul class="list-unstyled small mb-3">
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">+</code> сложение</li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">-</code> вычитание</li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">*</code> умножение</li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">/</code> деление</li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">%</code> остаток</li>
+                </ul>
                 
-                <div class="collapse mt-3" id="operationsCollapse">
-                    <div class="card" style="background-color: #f8f9fa; border: 1px solid #dee2e6;">
-                        <div class="card-body">
-                            <h6 class="fw-bold mb-2">Арифметические:</h6>
-                            <ul class="list-unstyled small mb-3">
-                                <li><code>+</code> сложение</li>
-                                <li><code>-</code> вычитание</li>
-                                <li><code>*</code> умножение</li>
-                                <li><code>/</code> деление</li>
-                            </ul>
-                            
-                            <h6 class="fw-bold mb-2">Функции:</h6>
-                            <ul class="list-unstyled small">
-                                <li><code>GCD(a, b)</code> НОД</li>
-                                <li><code>LCM(a, b)</code> НОК</li>
-                                <li><code>MOD(a, b)</code> остаток</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <h6 class="fw-bold mb-2" style="color: #2c3e50;">Функции:</h6>
+                <ul class="list-unstyled small mb-3">
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">GCD(a, b)</code> - НОД</li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">LCM(a, b)</code> - НОК</li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">NZER(a)</code> - проверка на ноль</li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">TM(a, k)</code> - a^(10*k)</li>
+                </ul>
+                
+                <h6 class="fw-bold mb-2" style="color: #2c3e50;">Примеры:</h6>
+                <ul class="list-unstyled small">
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">12 + 5</code></li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">GCD(48, 18)</code></li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">100 / 7</code></li>
+                </ul>
             </div>
         </div>
     </div>
     
     <!-- ПРАВАЯ КОЛОНКА: История вычислений -->
     <div class="col-md-7">
-        <div class="history-section">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-3">
-                    <i class="bi bi-clock-history"></i> История вычислений
-                </h4>
-                
-                <!-- Кнопка очистки -->
-                {% if history %}
-                <form method="POST" action="{{ url_for('clear_natural_history') }}" class="d-inline">
-                    <button type="submit" class="btn btn-sm btn-outline-danger" 
-                            onclick="return confirm('Вы уверены, что хотите очистить историю?')">
-                        <i class="bi bi-trash"></i> Очистить
-                    </button>
-                </form>
-                {% endif %}
-            </div>
+        <div class="input-section" style="margin-bottom: 1.5rem;">
+            <!-- Заголовок с фиксированной высотой -->
+            <h4 class="mb-3" style="height: 2.5rem; display: flex; align-items: center;">
+                <i class="bi bi-pencil-square"></i> История вычислений
+            </h4>
             
             <!-- Блок истории -->
             <div class="history-container" id="history" 
@@ -89,7 +87,7 @@
                 {% if history %}
                     {% for item in history %}
                     <div class="history-item mb-3 p-3" 
-                         style="background-color: white; border-left: 4px solid #3498db; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                         style="background-color: white; border-left: 4px solid #3498db; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1rem;">
                         <div class="input-expression mb-2">
                             <small class="text-muted d-block mb-1">
                                 <i class="bi bi-arrow-right-circle"></i> Ввод:
@@ -116,6 +114,15 @@
                     </div>
                 {% endif %}
             </div>
+            <!-- Кнопка очистки (ВНЕ истории) -->
+            {% if history %}
+            <form method="POST" action="{{ url_for('clear_natural_history') }}" class="d-inline" style="margin-top: 1rem; display: block;">
+                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                        onclick="return confirm('Вы уверены, что хотите очистить историю?')">
+                    <i class="bi bi-trash"></i> Очистить
+                </button>
+            </form>
+            {% endif %}
         </div>
     </div>
 </div>

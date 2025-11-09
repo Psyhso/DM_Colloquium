@@ -9,7 +9,7 @@ from my_math.natural_module import NaturalModule
 app = Flask(__name__)
 Bootstrap(app)
 
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = "a-fixed-secret-key-for-development"
 
 @app.route('/')
 def index():
@@ -33,7 +33,6 @@ def natural():
             flash('Вычисление выполнено успешно!', 'success')
             
         except Exception as e:
-            # print(f"Ошибка: {str(e)}', 'danger")
             flash(f'Ошибка: {str(e)}', 'danger')
         
         return redirect(url_for('natural'))
