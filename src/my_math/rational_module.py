@@ -104,19 +104,59 @@ class RationalModule:
         Принимает на вход: другую дробь (other)
         Алгоритм: Умножаем числители и знаменатели части дробей, затем сокращаем дробь
         """
-        self.up = self.up.MUL_ZZ_Z(other.up)
-        self.down.MUL_NN_N(other.down)
+        # СОЗДАЕМ КОПИЮ other, чтобы не изменять исходный объект
+        other_copy = RationalModule(
+            IntegerModule(other.up.b, other.up.n, other.up.A.copy()),
+            NaturalModule(other.down.n, other.down.A.copy())
+        )
+        
+        # Умножаем числители
+        new_up = self.up.MUL_ZZ_Z(other_copy.up)
+        
+        # Умножаем знаменатели  
+        new_down = NaturalModule(self.down.n, self.down.A.copy())
+        new_down.MUL_NN_N(other_copy.down)
+        
+        # Обновляем текущий объект
+        self.up = new_up
+        self.down = new_down
+        
         return self.RED_Q_Q()
 
     def DIV_QQ_Q(self, other):
         """
-        Овчаренко 4384
-
-        Принимает на вход: другую дробь (other)
-        Алгоритм: Умножаем на обратную дробь, учитываем знак и сокращаем итоговую
+        Деление рациональных чисел
         """
-        self.up = self.up.MUL_ZZ_Z(IntegerModule(other.up.b, other.down.n, other.down.A))
-        self.down.MUL_NN_N(NaturalModule(other.up.n, other.up.A))
+        # Проверка деления на ноль
+        if other.up.POZ_Z_D() == 0:
+            raise ZeroDivisionError("Деление на ноль")
+        
+        # Создаем копии для безопасности
+        self_up_copy = IntegerModule(self.up.b, self.up.n, self.up.A.copy())
+        self_down_copy = NaturalModule(self.down.n, self.down.A.copy())
+        other_up_copy = IntegerModule(other.up.b, other.up.n, other.up.A.copy())
+        other_down_copy = NaturalModule(other.down.n, other.down.A.copy())
+        
+        # Умножаем на обратную дробь: (a/b) / (c/d) = (a*d) / (b*c)
+        
+        # Преобразуем other_down_copy в IntegerModule для умножения
+        other_down_int = IntegerModule(0, other_down_copy.n, other_down_copy.A.copy())
+        new_up = self_up_copy.MUL_ZZ_Z(other_down_int)
+        
+        new_down = NaturalModule(self_down_copy.n, self_down_copy.A.copy())
+        
+        # Для знаменателя используем модуль числителя other
+        other_up_abs = other_up_copy.ABS_Z_Z().TRANS_Z_N()
+        new_down.MUL_NN_N(other_up_abs)
+        
+        # Учитываем знак other
+        if other_up_copy.b == 1:  # Если other отрицательный
+            new_up = new_up.MUL_ZM_Z()
+        
+        # Обновляем объект
+        self.up = new_up
+        self.down = new_down
+        
         return self.RED_Q_Q()
 
     def __str__(self):

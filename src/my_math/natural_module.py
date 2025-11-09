@@ -10,6 +10,12 @@ class NaturalModule:
         """
         self.n = n
         self.A = A
+         # Проверяем, что массив A имеет правильный размер
+        if len(self.A) != self.n + 1:
+            # Автоматически корректируем размер
+            self.A = self.A[:self.n + 1]
+            while len(self.A) < self.n + 1:
+                self.A.append(0)
     
     def COM_NN_D(self, other):
         """
@@ -171,24 +177,28 @@ class NaturalModule:
     
     def MUL_NN_N(self, other):
         """
-        Баневич 4384
-        
-        Принимает на вход: другое натуральное число (other)
-        Возвращает: self (изменённый объект)
-
-        Использование в других методах: 1
+        Умножение натуральных чисел
         """
-        # Используем метод умножения столбиком
-        result_A = [0] * (self.n + other.n + 2)
+        # Если одно из чисел ноль, возвращаем ноль
+        if (self.n == 0 and self.A[0] == 0) or (other.n == 0 and other.A[0] == 0):
+            self.n = 0
+            self.A = [0]
+            return self
         
-        for i in range(self.n + 1):
-            for j in range(other.n + 1):
+        # Создаем массив для результата (максимально возможный размер)
+        result_size = len(self.A) + len(other.A)
+        result_A = [0] * result_size
+        
+        # Умножение столбиком
+        for i in range(len(self.A)):
+            for j in range(len(other.A)):
                 result_A[i + j] += self.A[i] * other.A[j]
         
-        # Обрабатывем переносы
+        # Обработка переносов
         for i in range(len(result_A) - 1):
-            result_A[i + 1] += result_A[i] // 10
-            result_A[i] %= 10
+            if result_A[i] >= 10:
+                result_A[i + 1] += result_A[i] // 10
+                result_A[i] = result_A[i] % 10
         
         # Удаляем ведущие нули
         while len(result_A) > 1 and result_A[-1] == 0:
