@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.parent))
 import re
+from abc import ABC, abstractmethod
 from my_math.natural_module import NaturalModule
 
 
@@ -13,22 +14,23 @@ class MathExpressionParser:
             '-': 1,
             '*': 2,
             '/': 2,
-            '%': 2
+            '%': 2,
+            '>': 0
         }
         
         # Список поддерживаемых функций
-        self.functions = {'НОД', 'НОК', 'GCF', 'LCM', 'nod', 'nok'}
+        self.functions = {'НОД', 'НОК', 'GCD', 'LCM', 'nod', 'nok', 'NZER', 'TM'}
     
-    def tokenize(self, expression):
+    def tokenize(self, expression: str) -> list:
         """
         Разбивает выражение на токены: числа, операторы, функции, скобки, запятые
         """
         # Паттерн для: функции, числа, операторы, скобки, запятые
-        pattern = r'([А-Яа-яA-Za-z_][А-Яа-яA-Za-z0-9_]*|\d+|[+\-*/%(),])'
+        pattern = r'([А-Яа-яA-Za-z_][А-Яа-яA-Za-z0-9_]*|\d+|[+\-*/%(),>])'
         tokens = re.findall(pattern, expression.replace(' ', ''))
         return tokens
     
-    def to_postfix(self, expression):
+    def to_postfix(self, expression: str) -> list:
         """
         Преобразует инфиксное выражение в постфиксное (ОПН)
         с поддержкой функций НОД и НОК
@@ -88,80 +90,6 @@ class MathExpressionParser:
         
         return output
     
-    def evaluate(self, expression, natural_module_class):
-        """
-        Вычисляет выражение в ОПН используя NaturalModule
-        """
-        stack = []
-        postfix = self.to_postfix(expression)
-        
-        for token in postfix:
-            # Если число - создаем NaturalModule и помещаем в стек
-            if token.isdigit():
-                # Преобразуем строку в NaturalModule
-                digits = [int(d) for d in token][::-1]  # Младший разряд первый
-                n = len(digits) - 1
-                num = natural_module_class(n, digits)
-                stack.append(num)
-            
-            # Если бинарный оператор
-            elif token in ['+', '-', '*', '/', '%']:
-                right = stack.pop()
-                left = stack.pop()
-                
-                # Создаем копию для сохранения исходных значений
-                result = natural_module_class(left.n, left.A.copy())
-                
-                if token == '+':
-                    result.ADD_NN_N(right)
-                elif token == '-':
-                    result.SUB_NN_N(right)
-                elif token == '*':
-                    result.MUL_NN_N(right)
-                elif token == '/':
-                    result.DIV_NN_N(right)
-                elif token == '%':
-                    result.MOD_NN_N(right)
-                
-                stack.append(result)
-            
-            # Если функция НОД или НОК
-            elif token in ['НОД', 'GCF', 'NOD']:
-                # НОД принимает 2 аргумента
-                right = stack.pop()
-                left = stack.pop()
-                result = natural_module_class(left.n, left.A.copy())
-                result.GCF_NN_N(right)
-                stack.append(result)
-            
-            elif token in ['НОК', 'LCM', 'NOK']:
-                # НОК принимает 2 аргумента
-                # НОК(a,b) = (a*b) / НОД(a,b)
-                right = stack.pop()
-                left = stack.pop()
-                
-                # Вычисляем НОД
-                gcd = natural_module_class(left.n, left.A.copy())
-                gcd.GCF_NN_N(natural_module_class(right.n, right.A.copy()))
-                
-                # Вычисляем a*b
-                product = natural_module_class(left.n, left.A.copy())
-                product.MUL_NN_N(right)
-                
-                # НОК = (a*b) / НОД
-                product.DIV_NN_N(gcd)
-                stack.append(product)
-        
-        return str(stack[0]) if stack else None
-
-
-# parser = MathExpressionParser()
-# out = parser.evaluate("10+14", NaturalModule)
-# print(type(out))
-
-# a = NaturalModule(1, [0, 5])
-# b = NaturalModule(0, [5])
-# print(b)
-
-# print(a.GCF_NN_N(b).A, a.GCF_NN_N(b).n)
-# print(val_natural("НОД(7, 13)").A, val_natural("НОД(7, 13)").n)
+    @abstractmethod
+    def evaluate(self, expression: str, module_class):
+        pass
