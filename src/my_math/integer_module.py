@@ -130,7 +130,7 @@ class IntegerModule:
         if comparison == 1:
             result_abs = abs_b.SUB_NN_N(abs_a)
             # Результат имеет знак второго числа
-            if sign_a == 1:
+            if sign_b == 1:
                 return IntegerModule(0, result_abs.n, result_abs.A)
             else:
                 return IntegerModule(1, result_abs.n, result_abs.A)
@@ -196,20 +196,19 @@ class IntegerModule:
         if sign_a == 0:
             return IntegerModule(0, 0, [0])
 
-        # Получаем модули чисел
-        abs_a = self.ABS_Z_Z().TRANS_Z_N()
-        abs_b = other.ABS_Z_Z().TRANS_Z_N()
+        # Получаем модули чисел (создаем копии)
+        abs_a = NaturalModule(self.n, self.A.copy())
+        abs_b = NaturalModule(other.n, other.A.copy())
 
         # Сравниваем модули
         comparison = abs_a.COM_NN_D(abs_b)
 
         # Если модуль делимого меньше модуля делителя
         if comparison == 1:
-            # |a| < |b|
             if sign_a == 1 and sign_b == 1:
-                return IntegerModule(0, 0, [0])  # 0
+                return IntegerModule(0, 0, [0])  
             elif sign_a == 1 and sign_b == -1:
-                return IntegerModule(1, 0, [0])  # -0 (но исправим на 0)
+                return IntegerModule(1, 0, [0])  
             elif sign_a == -1 and sign_b == 1:
                 # Для отрицательного делимого и положительного делителя
                 # результат должен быть -1
@@ -217,10 +216,15 @@ class IntegerModule:
             else:  # оба отрицательные
                 return IntegerModule(0, 0, [1])  # 1
         else:
-            # Вычисляем частное и остаток от деления модулей
-            q0 = abs_a.DIV_NN_N(abs_b)
-            product = abs_b.MUL_NN_N(q0)
-            r0 = abs_a.SUB_NN_N(product)
+            # Вычисляем частное модулей
+            q0 = NaturalModule(abs_a.n, abs_a.A.copy())
+            q0.DIV_NN_N(abs_b)
+
+            # Вычисляем остаток от деления модулей
+            product = NaturalModule(abs_b.n, abs_b.A.copy())
+            product.MUL_NN_N(q0)
+            r0 = NaturalModule(abs_a.n, abs_a.A.copy())
+            r0.SUB_NN_N(product)
 
             # Проверяем, равен ли остаток нулю
             is_zero_remainder = (r0.n == 0 and r0.A[0] == 0)
@@ -243,7 +247,8 @@ class IntegerModule:
                     # Увеличиваем частное на 1 и делаем отрицательным
                     result_sign = 1
                     one = NaturalModule(0, [1])
-                    q_result = q0.ADD_NN_N(one)
+                    q_result = NaturalModule(q0.n, q0.A.copy())
+                    q_result.ADD_NN_N(one)
             else:
                 # Оба отрицательные
                 if is_zero_remainder:
@@ -253,7 +258,8 @@ class IntegerModule:
                     # Увеличиваем частное на 1 и делаем положительным
                     result_sign = 0
                     one = NaturalModule(0, [1])
-                    q_result = q0.ADD_NN_N(one)
+                    q_result = NaturalModule(q0.n, q0.A.copy())
+                    q_result.ADD_NN_N(one)
 
             # Если частное равно нулю, устанавливаем положительный знак
             if q_result.n == 0 and q_result.A[0] == 0:
