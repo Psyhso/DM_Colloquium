@@ -3,8 +3,11 @@ from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
-from validation.natural_val import MathExpressionParser
+from validation.natural_expression_parser import NatExpressionParser
+from validation.integer_expression_parser import IntExpressionParser
 from my_math.natural_module import NaturalModule
+from my_math.integer_module import IntegerModule
+
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -23,7 +26,7 @@ def natural():
     if request.method == 'POST':
         expression = request.form.get('math_exp')
         try:
-            parser = MathExpressionParser()
+            parser = NatExpressionParser()
             result = parser.evaluate(expression, NaturalModule)
             session['natural_history'].append({
                 'expression': expression,
@@ -50,9 +53,34 @@ def clear_natural_history():
 
 @app.route('/integer', methods=['GET', 'POST'])
 def integer():
-    if request.method == "POST":
-        math_exp = request.form['math_exp']
-    return render_template("natural.html")
+    if 'integer_history' not in session:
+        session['integer_history'] = []
+    
+    if request.method == 'POST':
+        expression = request.form.get('math_exp')
+        try:
+            parser = IntExpressionParser()
+            result = parser.evaluate(expression, IntegerModule)
+            session['integer_history'].append({
+                'expression': expression,
+                'result': result
+            })
+            session.modified = True
+            flash('Вычисление выполнено успешно!', 'success')
+            
+        except Exception as e:
+            flash(f'Ошибка: {str(e)}', 'danger') 
+        
+        return redirect(url_for('integer'))
+    
+    return render_template('integer.html', history=session.get('integer_history', []))
+
+@app.route('/integer/clear', methods=['POST'])
+def clear_integer_history():
+    session['integer_history'] = []
+    session.modified = True
+    flash('История очищена', 'info')
+    return redirect(url_for('integer'))
 
 
 @app.route('/rational', methods=['GET', 'POST'])
