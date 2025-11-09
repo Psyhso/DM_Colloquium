@@ -1,4 +1,4 @@
-from natural_module import NaturalModule
+from .natural_module import NaturalModule
 
 class IntegerModule:
     def __init__(self, b: int, n: int, A: list):

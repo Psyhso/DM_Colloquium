@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.parent))
 import re
+from abc import ABC, abstractmethod
 from my_math.natural_module import NaturalModule
 
 
@@ -25,7 +26,7 @@ class MathExpressionParser:
         Разбивает выражение на токены: числа, операторы, функции, скобки, запятые
         """
         # Паттерн для: функции, числа, операторы, скобки, запятые
-        pattern = r'([А-Яа-яA-Za-z_][А-Яа-яA-Za-z0-9_]*|\d+|[+\-*/%(),>^])'
+        pattern = r'([А-Яа-яA-Za-z_][А-Яа-яA-Za-z0-9_]*|\d+|[+\-*/%(),>])'
         tokens = re.findall(pattern, expression.replace(' ', ''))
         return tokens
     
@@ -89,84 +90,6 @@ class MathExpressionParser:
         
         return output
     
-    def evaluate(self, expression: str, natural_module_class: NaturalModule):
-        """
-        Вычисляет выражение в ОПН используя NaturalModule
-        """
-        stack = []
-        postfix = self.to_postfix(expression)
-        
-        for token in postfix:
-            # Если число - создаем NaturalModule и помещаем в стек
-            if token.isdigit():
-                # Преобразуем строку в NaturalModule
-                digits = [int(d) for d in token][::-1]  # Младший разряд первый
-                n = len(digits) - 1
-                num = natural_module_class(n, digits)
-                stack.append(num)
-            
-            # Если бинарный оператор
-            elif token in ['+', '-', '*', '/', '%', '^', '>']:
-                right = stack.pop()
-                left = stack.pop()
-                
-                # Создаем копию для сохранения исходных значений
-                result = natural_module_class(left.n, left.A.copy())
-                
-                if token == '+':
-                    result.ADD_NN_N(right)
-                elif token == '-':
-                    if result.COM_NN_D(right) != 1:
-                        result.SUB_NN_N(right)
-                    else:
-                        raise Exception("Нельзя из меньшего вычесть большее!")
-                elif token == '*':
-                    result.MUL_NN_N(right)
-                elif token == '/':
-                    result.DIV_NN_N(right)
-                elif token == '%':
-                    result.MOD_NN_N(right)
-                elif token == '>':
-                    temp = result.COM_NN_D(right)
-                    result.A = reversed([int(i) for i in str(temp)])
-                    result.n = len(str(temp)) - 1
-                
-                stack.append(result)
-            
-            # Если функция НОД или НОК
-            elif token in ['НОД', 'GCD', 'NOD']:
-                # НОД принимает 2 аргумента
-                right = stack.pop()
-                left = stack.pop()
-                result = natural_module_class(left.n, left.A.copy())
-                result.GCF_NN_N(right)
-                stack.append(result)
-            
-            elif token in ['НОК', 'LCM', 'NOK']:
-                # НОК принимает 2 аргумента
-                right = stack.pop()
-                left = stack.pop()
-                
-                # Вычисляем НОД
-                lcm = natural_module_class(left.n, left.A.copy())
-                lcm.LCM_NN_N(natural_module_class(right.n, right.A.copy()))
-
-                stack.append(lcm)
-
-            elif token in ['NZER']:
-                # NZER принимает 1 аргумент
-                number = stack.pop()
-
-                result = natural_module_class(number.n, number.A.copy()).NZER_N_B()
-                stack.append(int(result))
-
-            elif token in ['TM']:
-                # TM принимает 2 аргумента
-                right = stack.pop()
-                left = stack.pop()
-                print(right, left)
-                result = natural_module_class(left.n, left.A.copy()).MUL_Nk_N(int(str(right)))
-                stack.append(result)
-
-        
-        return str(stack[0]) if stack else None
+    @abstractmethod
+    def evaluate(self, expression: str, module_class):
+        pass
