@@ -13,22 +13,23 @@ class MathExpressionParser:
             '-': 1,
             '*': 2,
             '/': 2,
-            '%': 2
+            '%': 2,
+            '>': 0
         }
         
         # Список поддерживаемых функций
-        self.functions = {'НОД', 'НОК', 'GCF', 'LCM', 'nod', 'nok'}
+        self.functions = {'НОД', 'НОК', 'GCD', 'LCM', 'nod', 'nok', 'NZER', 'TM'}
     
-    def tokenize(self, expression):
+    def tokenize(self, expression: str) -> list:
         """
         Разбивает выражение на токены: числа, операторы, функции, скобки, запятые
         """
         # Паттерн для: функции, числа, операторы, скобки, запятые
-        pattern = r'([А-Яа-яA-Za-z_][А-Яа-яA-Za-z0-9_]*|\d+|[+\-*/%(),])'
+        pattern = r'([А-Яа-яA-Za-z_][А-Яа-яA-Za-z0-9_]*|\d+|[+\-*/%(),>^])'
         tokens = re.findall(pattern, expression.replace(' ', ''))
         return tokens
     
-    def to_postfix(self, expression):
+    def to_postfix(self, expression: str) -> list:
         """
         Преобразует инфиксное выражение в постфиксное (ОПН)
         с поддержкой функций НОД и НОК
@@ -88,7 +89,7 @@ class MathExpressionParser:
         
         return output
     
-    def evaluate(self, expression, natural_module_class):
+    def evaluate(self, expression: str, natural_module_class: NaturalModule):
         """
         Вычисляет выражение в ОПН используя NaturalModule
         """
@@ -105,7 +106,7 @@ class MathExpressionParser:
                 stack.append(num)
             
             # Если бинарный оператор
-            elif token in ['+', '-', '*', '/', '%']:
+            elif token in ['+', '-', '*', '/', '%', '^', '>']:
                 right = stack.pop()
                 left = stack.pop()
                 
@@ -115,18 +116,25 @@ class MathExpressionParser:
                 if token == '+':
                     result.ADD_NN_N(right)
                 elif token == '-':
-                    result.SUB_NN_N(right)
+                    if result.COM_NN_D(right) != 1:
+                        result.SUB_NN_N(right)
+                    else:
+                        raise Exception("Нельзя из меньшего вычесть большее!")
                 elif token == '*':
                     result.MUL_NN_N(right)
                 elif token == '/':
                     result.DIV_NN_N(right)
                 elif token == '%':
                     result.MOD_NN_N(right)
+                elif token == '>':
+                    temp = result.COM_NN_D(right)
+                    result.A = reversed([int(i) for i in str(temp)])
+                    result.n = len(str(temp)) - 1
                 
                 stack.append(result)
             
             # Если функция НОД или НОК
-            elif token in ['НОД', 'GCF', 'NOD']:
+            elif token in ['НОД', 'GCD', 'NOD']:
                 # НОД принимает 2 аргумента
                 right = stack.pop()
                 left = stack.pop()
@@ -136,32 +144,29 @@ class MathExpressionParser:
             
             elif token in ['НОК', 'LCM', 'NOK']:
                 # НОК принимает 2 аргумента
-                # НОК(a,b) = (a*b) / НОД(a,b)
                 right = stack.pop()
                 left = stack.pop()
                 
                 # Вычисляем НОД
-                gcd = natural_module_class(left.n, left.A.copy())
-                gcd.GCF_NN_N(natural_module_class(right.n, right.A.copy()))
-                
-                # Вычисляем a*b
-                product = natural_module_class(left.n, left.A.copy())
-                product.MUL_NN_N(right)
-                
-                # НОК = (a*b) / НОД
-                product.DIV_NN_N(gcd)
-                stack.append(product)
+                lcm = natural_module_class(left.n, left.A.copy())
+                lcm.LCM_NN_N(natural_module_class(right.n, right.A.copy()))
+
+                stack.append(lcm)
+
+            elif token in ['NZER']:
+                # NZER принимает 1 аргумент
+                number = stack.pop()
+
+                result = natural_module_class(number.n, number.A.copy()).NZER_N_B()
+                stack.append(int(result))
+
+            elif token in ['TM']:
+                # TM принимает 2 аргумента
+                right = stack.pop()
+                left = stack.pop()
+                print(right, left)
+                result = natural_module_class(left.n, left.A.copy()).MUL_Nk_N(int(str(right)))
+                stack.append(result)
+
         
         return str(stack[0]) if stack else None
-
-
-# parser = MathExpressionParser()
-# out = parser.evaluate("10+14", NaturalModule)
-# print(type(out))
-
-# a = NaturalModule(1, [0, 5])
-# b = NaturalModule(0, [5])
-# print(b)
-
-# print(a.GCF_NN_N(b).A, a.GCF_NN_N(b).n)
-# print(val_natural("НОД(7, 13)").A, val_natural("НОД(7, 13)").n)
