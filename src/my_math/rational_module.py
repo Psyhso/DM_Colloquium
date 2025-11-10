@@ -1,5 +1,5 @@
-from natural_module import NaturalModule
-from integer_module import IntegerModule
+from .natural_module import NaturalModule
+from .integer_module import IntegerModule
 
 class RationalModule:
     def __init__(self, up: IntegerModule, down: NaturalModule):
@@ -28,7 +28,8 @@ class RationalModule:
         использует числитель и знаменатель из инициализации, возвращает "да" если
         знаменатель=1 (рациональное=целое) иначе "нет"
         """
-        if self.down.n == 0 and self.down.A[0] == 1:
+        red = self.RED_Q_Q()
+        if red.down.n == 0 and red.down.A[0] == 1:
             return "да"
         else:
             return "нет"

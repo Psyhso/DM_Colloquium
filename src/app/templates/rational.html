@@ -2,7 +2,7 @@
 
 {% block sub_content %}
 <h1 class="page-title">
-    <i class="bi bi-calculator"></i> Операции над целыми числами
+    <i class="bi bi-calculator"></i> Операции над рациональными числами
 </h1>
 
 <!-- gap добавляет расстояние между колонками -->
@@ -23,7 +23,7 @@
                         id="math_exp" 
                         name="math_exp" 
                         rows="3"
-                        placeholder="Например: 123 + 456&#10;или ABS(-5)" 
+                        placeholder="Например: 123 + 456&#10;или GCD(48, 18)" 
                         required
                         autocomplete="off"
                         style="font-size: 1.1em; font-family: 'Courier New', monospace; border: 2px solid #e0e0e0; resize: vertical;"
@@ -52,20 +52,19 @@
                     <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">-</code> вычитание</li>
                     <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">*</code> умножение</li>
                     <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">/</code> деление</li>
-                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">%</code> остаток</li>
                 </ul>
                 
                 <h6 class="fw-bold mb-2" style="color: #2c3e50;">Функции:</h6>
                 <ul class="list-unstyled small mb-3">
-                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">POZ(a)</code> - проверка на положительность</li>
-                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">ABS(a)</code> - модуль числа</li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">INT(a)</code> - проверка: является ли дробь целым числом</li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">RED(a)</code> - сокращение дроби</li>
                 </ul>
                 
                 <h6 class="fw-bold mb-2" style="color: #2c3e50;">Примеры:</h6>
                 <ul class="list-unstyled small">
-                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">13 + 7</code></li>
-                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">POZ(325)</code></li>
-                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">112 / 5</code></li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">13/2 + 3/4</code></li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">INT(21/7)</code></li>
+                    <li><code style="background-color: white; padding: 2px 6px; border-radius: 3px;">100/15 - 7/3</code></li>
                 </ul>
             </div>
         </div>
@@ -114,7 +113,7 @@
             </div>
             <!-- Кнопка очистки (ВНЕ истории) -->
             {% if history %}
-            <form method="POST" action="{{ url_for('clear_integer_history') }}" class="d-inline" style="margin-top: 1rem; display: block;">
+            <form method="POST" action="{{ url_for('clear_rational_history') }}" class="d-inline" style="margin-top: 1rem; display: block;">
                 <button type="submit" class="btn btn-sm btn-outline-danger" 
                         onclick="return confirm('Вы уверены, что хотите очистить историю?')">
                     <i class="bi bi-trash"></i> Очистить
