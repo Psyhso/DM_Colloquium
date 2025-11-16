@@ -3,7 +3,7 @@ class NaturalModule:
     def __init__(self, n: int, A: list):
         """
         Инициализация натурального числа.
-        
+
         Параметры:
         n (int): номер старшей позиции
         A (list): массив цифр
@@ -37,7 +37,7 @@ class NaturalModule:
         """
         N-2: Проверка на ноль
         Баневич 4384
-        
+
         Возвращает: False если число равно нулю, True иначе
         """
         # Проверяем условие нуля: n=0 и единственная цифра равна 0
@@ -49,7 +49,7 @@ class NaturalModule:
         """
         N-3: Добавление 1 к натуральному числу
         Баневич 4384
-        
+
         Добавляет 1 к текущему натуральному числу.
         Возвращает: self (изменённый объект)
         """
@@ -70,7 +70,7 @@ class NaturalModule:
             self.A.append(1)  # Добавляем единицу в старший разряд
             self.n += 1  # Увеличиваем индекс старшего разряда
         return self
-    
+
     def MUL_ND_N(self, d: int):
         """
         N-6: Умножение натурального числа на цифру
@@ -102,12 +102,12 @@ class NaturalModule:
         self.A = new_A  # Записываем результат
         self.n = len(new_A) - 1  # Обновляем индекс старшей позиции
         return self
-    
+
     def MUL_Nk_N(self, k: int):
         """
         N-7: Умножение натурального числа на 10^k
         Баневич 4384
-        
+
         Принимает на вход: k - степень десятки
         Возвращает: self (изменённый объект)
         """
@@ -120,12 +120,12 @@ class NaturalModule:
         self.n = self.n + k  # Увеличиваем индекс старшей позиции на k
         
         return self
-    
+
     def ADD_NN_N(self, other):
         """
         N-4: Сложение натуральных чисел
         Баневич 4384
-        
+
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект)
         """
@@ -149,12 +149,12 @@ class NaturalModule:
         self.A = result_A  # Записываем результат
         self.n = len(result_A) - 1  # Обновляем индекс старшей позиции
         return self
-    
+
     def SUB_NN_N(self, other):
         """
         N-5: Вычитание из натурального другого натурального
         Баневич 4384
-        
+
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект)
         Предполагается: self >= other
@@ -183,7 +183,7 @@ class NaturalModule:
         self.A = result_A  # Записываем результат
         self.n = len(result_A) - 1  # Обновляем индекс старшей позиции
         return self
-    
+
     def MUL_NN_N(self, other):
         """
         N-8: Умножение натуральных чисел
@@ -215,12 +215,12 @@ class NaturalModule:
         self.A = result_A  # Записываем результат
         self.n = len(result_A) - 1  # Обновляем индекс старшей позиции
         return self
-    
+
     def SUB_NDN_N(self, other, d: int):
         """
         N-9: Вычитание из натурального другого, умноженного на цифру
         Баневич 4384
-        
+
         Принимает на вход: другое натуральное число (other), цифра d (0-9)
         Возвращает: self (изменённый объект)
         """
@@ -231,12 +231,12 @@ class NaturalModule:
         # Вычитаем результат из self
         self.SUB_NN_N(temp)
         return self
-    
+
     def DIV_NN_Dk(self, other):
         """
         N-10: Вычисление первой цифры деления большего натурального на меньшее
         Баневич 4384
-        
+
         Принимает на вход: другое натуральное число (other)
         Возвращает: (d, k) - первая цифра частного и степень 10^k
         """
@@ -245,7 +245,7 @@ class NaturalModule:
         # Если делимое меньше делителя, частное 0
         if k < 0:
             return (0, 0)
-        
+
         # Подбираем максимальную цифру d: d * other * 10^k <= self
         for d in range(9, -1, -1):  # Перебираем от 9 до 0
             temp = NaturalModule(other.n, other.A.copy())  # Копируем делитель
@@ -262,7 +262,7 @@ class NaturalModule:
         """
         N-11: Неполное частное от деления первого натурального на второе
         Баневич 4384
-        
+
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект) - неполное частное
         """
@@ -300,7 +300,7 @@ class NaturalModule:
         
         # Переворачиваем массив цифр частного (собирали в обратном порядке)
         quotient_A.reverse()
-    
+
         # Удаляем ведущие нули
         while len(quotient_A) > 1 and quotient_A[-1] == 0:
             quotient_A.pop()
@@ -308,12 +308,12 @@ class NaturalModule:
         self.A = quotient_A  # Записываем результат
         self.n = len(quotient_A) - 1  # Обновляем индекс старшей позиции
         return self
-    
+
     def MOD_NN_N(self, other):
         """
         N-12: Остаток от деления первого натурального на второе
         Баневич 4384
-        
+
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект) - остаток
         """
@@ -331,7 +331,7 @@ class NaturalModule:
         """
         N-13: НОД натуральных чисел
         Баневич 4384
-        
+
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект) - НОД
 
@@ -345,7 +345,7 @@ class NaturalModule:
             # Меняем местами: self = other, other = remainder
             self.n = other.n
             self.A = other.A.copy()
-            
+
             other.n = remainder.n
             other.A = remainder.A.copy()
         
@@ -363,7 +363,7 @@ class NaturalModule:
         temp = NaturalModule(self.n, self.A.copy())
         temp.GCF_NN_N(other)  # temp = НОД(a,b)
 
-        self.MUL_NN_N(other_1)  # self = a * b        
+        self.MUL_NN_N(other_1)  # self = a * b
 
         self.DIV_NN_N(temp)  # self = (a*b) / НОД(a,b)
 

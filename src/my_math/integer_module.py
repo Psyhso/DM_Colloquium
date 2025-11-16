@@ -1,3 +1,5 @@
+from .natural_module import NaturalModule
+
 class IntegerModule:
     def __init__(self, b: int, n: int, A: list):
         self.b = b  # знак числа (1 - минус, 0 - плюс)
@@ -67,7 +69,7 @@ class IntegerModule:
         self.A = A
         return self
 
-    def TRANS_Z_N(self) -> tuple:
+    def TRANS_Z_N(self) -> NaturalModule:
         """
         Овчаренко 4384
 
@@ -75,4 +77,229 @@ class IntegerModule:
         """
         if self.b:
             raise ValueError("Отрицательное число не подходит для преобразования в натуральное")
-        return (self.n, self.A)
+        return NaturalModule(self.n, self.A)
+    
+    def ADD_ZZ_Z(self, other):
+        """
+        Водолазко 4384
+
+        Принимаемые значения: другое целое число (other)
+        Возвращает: результат сложения
+        """
+        # Определяем знаки чисел
+        sign_a = self.POZ_Z_D()
+        sign_b = other.POZ_Z_D()
+        
+        # Если одно из чисел равно нулю
+        if sign_a == 0:
+            return other
+        if sign_b == 0:
+            return self
+        
+        # Получаем натуральные модули чисел
+        abs_a = self.ABS_Z_Z().TRANS_Z_N()
+        abs_b = other.ABS_Z_Z().TRANS_Z_N()
+        
+        # Оба числа положительные
+        if sign_a == 1 and sign_b == 1:
+            result_abs = abs_a.ADD_NN_N(abs_b)
+            return IntegerModule(0, result_abs.n, result_abs.A)
+        
+        # Оба числа отрицательные  
+        if sign_a == -1 and sign_b == -1:
+            result_abs = abs_a.ADD_NN_N(abs_b)
+            return IntegerModule(1, result_abs.n, result_abs.A)
+        
+        # Числа разных знаков
+        comparison = abs_a.COM_NN_D(abs_b)
+
+        # Модули равны - результат ноль
+        if comparison == 0:
+            return IntegerModule(0, 0, [0])
+        
+        # Модуль первого числа больше
+        if comparison == 2:
+            result_abs = abs_a.SUB_NN_N(abs_b)
+            # Результат имеет знак первого числа
+            if sign_a == 1:
+                return IntegerModule(0, result_abs.n, result_abs.A)
+            else:
+                return IntegerModule(1, result_abs.n, result_abs.A)
+        
+        # Модуль второго числа больше
+        if comparison == 1:
+            result_abs = abs_b.SUB_NN_N(abs_a)
+            # Результат имеет знак второго числа
+            if sign_b == 1:
+                return IntegerModule(0, result_abs.n, result_abs.A)
+            else:
+                return IntegerModule(1, result_abs.n, result_abs.A)
+
+    def SUB_ZZ_Z(self, other):
+        """
+        Водолазко 4384
+
+        Принимаемые значения: другое целое число (other)
+        Возвращает: результ разности
+        """
+        # Вычитание это сложение с противоположным числом: a - b = a + (-b)
+        negative_other = other.MUL_ZM_Z()  # Получаем -other
+        return self.ADD_ZZ_Z(negative_other)  # Возвращаем self + (-other)
+
+    def MUL_ZZ_Z(self, other):
+        """
+        Водолазко 4384
+
+        Принимаемые значения: другое целое число (other)
+        Возвращает: результат умножения
+        """
+        sign_self = self.POZ_Z_D()
+        sign_other = other.POZ_Z_D()
+        
+        # Если одно из чисел равно нулю, результат - ноль
+        if sign_self == 0 or sign_other == 0:
+            return IntegerModule(0, 0, [0])
+        
+        # Получаем модули чисел
+        abs_self = (self.ABS_Z_Z()).TRANS_Z_N()
+        abs_other = (other.ABS_Z_Z()).TRANS_Z_N()
+        
+        # Умножаем модули (натуральные числа)
+        abs_self.MUL_NN_N(abs_other)
+        abs_result = NaturalModule(abs_self.n, abs_self.A)
+        
+        # Создаем целое число с результатом (пока положительное)
+        result = IntegerModule(0, abs_result.n, abs_result.A)
+        
+        # Определяем знак результата
+        if (sign_self == -1 and sign_other == 1) or (sign_self == 1 and sign_other == -1):
+            # Если знаки разные, результат отрицательный
+            result = result.MUL_ZM_Z()
+        
+        return result
+
+    def DIV_ZZ_Z(self, other):
+        """
+        Водолазко 4384
+
+        Принимаемые значения: другое целое число (other)
+        Возвращает: неполное частное
+        """
+        # Проверка деления на ноль
+        if other.POZ_Z_D() == 0:
+            raise Exception("Деление на ноль запрещено")
+
+        sign_a = self.POZ_Z_D()
+        sign_b = other.POZ_Z_D()
+
+        # Если делимое равно нулю
+        if sign_a == 0:
+            return IntegerModule(0, 0, [0])
+
+        # Получаем модули чисел (создаем копии)
+        abs_a = NaturalModule(self.n, self.A.copy())
+        abs_b = NaturalModule(other.n, other.A.copy())
+
+        # Сравниваем модули
+        comparison = abs_a.COM_NN_D(abs_b)
+
+        # Если модуль делимого меньше модуля делителя
+        if comparison == 1:
+            if sign_a == 1 and sign_b == 1:
+                return IntegerModule(0, 0, [0])  
+            elif sign_a == 1 and sign_b == -1:
+                return IntegerModule(1, 0, [0])  
+            elif sign_a == -1 and sign_b == 1:
+                # Для отрицательного делимого и положительного делителя
+                # результат должен быть -1
+                return IntegerModule(1, 0, [1])  # -1
+            else:  # оба отрицательные
+                return IntegerModule(0, 0, [1])  # 1
+        else:
+            # Вычисляем частное модулей
+            q0 = NaturalModule(abs_a.n, abs_a.A.copy())
+            q0.DIV_NN_N(abs_b)
+
+            # Вычисляем остаток от деления модулей
+            product = NaturalModule(abs_b.n, abs_b.A.copy())
+            product.MUL_NN_N(q0)
+            r0 = NaturalModule(abs_a.n, abs_a.A.copy())
+            r0.SUB_NN_N(product)
+
+            # Проверяем, равен ли остаток нулю
+            is_zero_remainder = (r0.n == 0 and r0.A[0] == 0)
+
+            # Определяем знак и корректируем частное
+            if sign_a == 1 and sign_b == 1:
+                # Оба положительные - результат положительный
+                result_sign = 0
+                q_result = q0
+            elif sign_a == 1 and sign_b == -1:
+                # Делимое положительное, делитель отрицательный - результат отрицательный
+                result_sign = 1
+                q_result = q0
+            elif sign_a == -1 and sign_b == 1:
+                # Делимое отрицательное, делитель положительный
+                if is_zero_remainder:
+                    result_sign = 1
+                    q_result = q0
+                else:
+                    # Увеличиваем частное на 1 и делаем отрицательным
+                    result_sign = 1
+                    one = NaturalModule(0, [1])
+                    q_result = NaturalModule(q0.n, q0.A.copy())
+                    q_result.ADD_NN_N(one)
+            else:
+                # Оба отрицательные
+                if is_zero_remainder:
+                    result_sign = 0
+                    q_result = q0
+                else:
+                    # Увеличиваем частное на 1 и делаем положительным
+                    result_sign = 0
+                    one = NaturalModule(0, [1])
+                    q_result = NaturalModule(q0.n, q0.A.copy())
+                    q_result.ADD_NN_N(one)
+
+            # Если частное равно нулю, устанавливаем положительный знак
+            if q_result.n == 0 and q_result.A[0] == 0:
+                result_sign = 0
+
+            return IntegerModule(result_sign, q_result.n, q_result.A)
+
+    def MOD_ZZ_Z(self, other):
+        """
+        Водолазко 4384
+
+        Принимаемые значения: другое целое число (other)
+        Возвращает: остаток от деления self на other
+        """
+        a = IntegerModule(self.b, self.n, self.A)
+        # Проверка деления на ноль
+        if other.POZ_Z_D() == 0:
+            raise Exception("Деление на ноль")
+
+        # Вычисляем частное
+        q = self.DIV_ZZ_Z(other)
+
+        # Вычисляем произведение other * q
+        product = other.MUL_ZZ_Z(q)
+
+        # Вычисляем остаток как self - product
+        remainder = a.SUB_ZZ_Z(product)
+
+        return remainder
+
+    def __str__(self) -> str:
+        """
+        Водолазко 4384
+
+        Метод вывода строкого представления целого числа
+        """
+        res = ""
+        if self.b and self.A != [0]:
+            res += "-"
+        for i in self.A[::-1]:
+            res += str(i)
+
+        return res
