@@ -1,6 +1,6 @@
-from natural_module import NaturalModule
-from integer_module import IntegerModule
-from rational_module import RationalModule
+from .natural_module import NaturalModule
+from .integer_module import IntegerModule
+from .rational_module import RationalModule
 
 
 class RealModule:
