@@ -1,5 +1,5 @@
 import pytest
-from my_math.natural_module import NaturalModule
+from ..my_math.natural_module import NaturalModule
 
 
 # Тесты для COM_NN_D (N-1)

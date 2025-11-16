@@ -1,8 +1,8 @@
 import pytest
-from my_math.real_module import RealModule
-from my_math.natural_module import NaturalModule
-from my_math.integer_module import IntegerModule
-from my_math.rational_module import RationalModule
+from ..my_math.real_module import RealModule
+from ..my_math.natural_module import NaturalModule
+from ..my_math.integer_module import IntegerModule
+from ..my_math.rational_module import RationalModule
 
 def create_natural_from_int(num: int):
     """Создает NaturalModule из целого числа"""
