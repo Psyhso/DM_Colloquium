@@ -8,169 +8,185 @@ class NaturalModule:
         n (int): номер старшей позиции
         A (list): массив цифр
         """
-        self.n = n
-        self.A = A
+        self.n = n  # Индекс старшей цифры
+        self.A = A  # Массив цифр от младшей к старшей
     
     def COM_NN_D(self, other):
         """
+        N-1: Сравнение натуральных чисел
         Баневич 4384
 
         Принимает на вход: другое натуральное число (other)
         Возвращает: 2 - если первое больше, 0 - равны, 1 - второе больше
         """
+        # Сравниваем количество цифр (если разное, сразу определяем больше/меньше)
         if self.n > other.n:
-            return 2
+            return 2  # У первого числа больше разрядов
         elif self.n < other.n:
-            return 1
+            return 1  # У второго числа больше разрядов
         
         # Если одинаковое количество цифр, сравниваем поразрядно от старшей
-        for i in range(self.n, -1, -1):
+        for i in range(self.n, -1, -1):  # Идём от старшей цифры к младшей
             if self.A[i] > other.A[i]:
-                return 2
+                return 2  # Цифра первого числа больше
             elif self.A[i] < other.A[i]:
-                return 1
-        return 0
+                return 1  # Цифра второго числа больше
+        return 0  # Все цифры равны - числа равны
     
     def NZER_N_B(self):
         """
+        N-2: Проверка на ноль
         Баневич 4384
         
         Возвращает: False если число равно нулю, True иначе
         """
+        # Проверяем условие нуля: n=0 и единственная цифра равна 0
         if self.n == 0 and self.A[0] == 0:
-            return False
-        return True
+            return False  # Число равно нулю
+        return True  # Число не ноль
     
     def ADD_1N_N(self):
         """
+        N-3: Добавление 1 к натуральному числу
         Баневич 4384
         
         Добавляет 1 к текущему натуральному числу.
         Возвращает: self (изменённый объект)
         """
-        carry = 1
+        carry = 1  # Начинаем с переноса 1 (это и есть прибавляемая единица)
         
-        # Проходим от младшей цифры
-        for i in range(self.n + 1):
-            self.A[i] += carry
-            if self.A[i] < 10:
-                carry = 0
-                break
-            else:
-                self.A[i] = 0
-                carry = 1
-        # Если остался перенос, добавляем новую цифру
+        # Проходим от младшей цифры с переносом
+        for i in range(self.n + 1):  # Проходим все разряды числа
+            self.A[i] += carry  # Прибавляем перенос к текущей цифре
+            if self.A[i] < 10:  # Если получилось меньше 10 - перенос не нужен
+                carry = 0  # Перенос исчерпан
+                break  # Выходим из цикла
+            else:  # Если получилось 10 или больше
+                self.A[i] = 0  # Записываем 0 в текущий разряд
+                carry = 1  # Переносим 1 в следующий разряд
+        
+        # Если остался перенос, добавляем новую цифру (число переходит в новый разряд)
         if carry == 1:
-            self.A.append(1)
-            self.n += 1
+            self.A.append(1)  # Добавляем единицу в старший разряд
+            self.n += 1  # Увеличиваем индекс старшего разряда
         return self
     
     def MUL_ND_N(self, d: int):
         """
+        N-6: Умножение натурального числа на цифру
         Баневич 4384
 
         Принимает на вход: d - цифра (0-9)
         Возвращает: self (изменённый объект)
         """
+        # Особый случай: умножение на 0
         if d == 0:
-            self.n = 0
-            self.A = [0]
+            self.n = 0  # Результат - число из одной цифры
+            self.A = [0]  # Результат = 0
             return self
         
-        new_A = []
-        carry = 0
+        new_A = []  # Новый массив для результата
+        carry = 0  # Перенос в старший разряд
         
-        # Умножаем каждую цифру на d
-        for i in range(self.n + 1):
-            temp = self.A[i] * d + carry
-            new_A.append(temp % 10)
-            carry = temp // 10
+        # Умножаем каждую цифру на d с учётом переноса
+        for i in range(self.n + 1):  # Проходим все цифры числа
+            temp = self.A[i] * d + carry  # Умножаем цифру на d и добавляем перенос
+            new_A.append(temp % 10)  # Берём младшую цифру результата
+            carry = temp // 10  # Старшие цифры идут в перенос
         
-        # Если остался перенос, добавляем его
-        while carry > 0:
-            new_A.append(carry % 10)
-            carry = carry // 10
-        self.A = new_A
-        self.n = len(new_A) - 1
+        # Если остался перенос, добавляем его как новые разряды
+        while carry > 0:  # Пока есть цифры в переносе
+            new_A.append(carry % 10)  # Добавляем младшую цифру переноса
+            carry = carry // 10  # Убираем обработанную цифру
+        
+        self.A = new_A  # Записываем результат
+        self.n = len(new_A) - 1  # Обновляем индекс старшей позиции
         return self
     
     def MUL_Nk_N(self, k: int):
         """
+        N-7: Умножение натурального числа на 10^k
         Баневич 4384
         
         Принимает на вход: k - степень десятки
         Возвращает: self (изменённый объект)
         """
+        # Если число 0, результат не меняется
         if self.n == 0 and self.A[0] == 0:
             return self
         
-        # Добавляем k нулей в начало массива
-        self.A = [0] * k + self.A
-        self.n = self.n + k
+        # Умножение на 10^k = добавление k нулей справа (в начало массива A)
+        self.A = [0] * k + self.A  # Добавляем k нулей в младшие разряды
+        self.n = self.n + k  # Увеличиваем индекс старшей позиции на k
         
         return self
     
     def ADD_NN_N(self, other):
         """
+        N-4: Сложение натуральных чисел
         Баневич 4384
         
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект)
         """
-        result_A = []
-        carry = 0
-        max_len = max(self.n, other.n) + 1
+        result_A = []  # Массив для результата
+        carry = 0  # Перенос
+        max_len = max(self.n, other.n) + 1  # Максимальная длина + 1 на случай переноса
         
         # Складываем цифры с учётом переноса
-        for i in range(max_len):
+        for i in range(max_len):  # Проходим все разряды
+            # Берём цифры (если разряд есть) или 0 (если разряда нет)
             digit1 = self.A[i] if i <= self.n else 0
             digit2 = other.A[i] if i <= other.n else 0
-            temp = digit1 + digit2 + carry
-            result_A.append(temp % 10)
-            carry = temp // 10
+            temp = digit1 + digit2 + carry  # Складываем цифры и перенос
+            result_A.append(temp % 10)  # Записываем младшую цифру суммы
+            carry = temp // 10  # Вычисляем перенос в следующий разряд
         
         # Если последний перенос, добавляем его
         if carry:
-            result_A.append(carry)
+            result_A.append(carry)  # Добавляем перенос как новый старший разряд
         
-        self.A = result_A
-        self.n = len(result_A) - 1
+        self.A = result_A  # Записываем результат
+        self.n = len(result_A) - 1  # Обновляем индекс старшей позиции
         return self
     
     def SUB_NN_N(self, other):
         """
+        N-5: Вычитание из натурального другого натурального
         Баневич 4384
         
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект)
+        Предполагается: self >= other
         """
-        result_A = []
-        borrow = 0 #переменная для заимствования 
+        result_A = []  # Массив для результата
+        borrow = 0  # Переменная для заимствования из старшего разряда
         
-        for i in range(self.n + 1):
-            digit1 = self.A[i]
-            digit2 = other.A[i] if i <= other.n else 0
-            temp = digit1 - digit2 - borrow
+        for i in range(self.n + 1):  # Проходим все разряды уменьшаемого
+            digit1 = self.A[i]  # Берём цифру уменьшаемого
+            digit2 = other.A[i] if i <= other.n else 0  # Цифра вычитаемого (или 0)
+            temp = digit1 - digit2 - borrow  # Вычитаем с учётом заимствования
             
-            # Если результат отрицательный, занимаем из старшей позиции
+            # Если результат отрицательный, занимаем 10 из старшей позиции
             if temp < 0:
-                temp += 10
-                borrow = 1
+                temp += 10  # Занимаем 10 из следующего разряда
+                borrow = 1  # Запоминаем, что заняли
             else:
-                borrow = 0
+                borrow = 0  # Заимствования не было
             
-            result_A.append(temp)
+            result_A.append(temp)  # Записываем цифру результата
         
         # Удаляем ведущие нули
         while len(result_A) > 1 and result_A[-1] == 0:
-            result_A.pop()
+            result_A.pop()  # Убираем старшие нули
         
-        self.A = result_A
-        self.n = len(result_A) - 1
+        self.A = result_A  # Записываем результат
+        self.n = len(result_A) - 1  # Обновляем индекс старшей позиции
         return self
     
     def MUL_NN_N(self, other):
         """
+        N-8: Умножение натуральных чисел
         Баневич 4384
         
         Принимает на вход: другое натуральное число (other)
@@ -178,132 +194,142 @@ class NaturalModule:
 
         Использование в других методах: 1
         """
-        # Используем метод умножения столбиком
-        result_A = [0] * (self.n + other.n + 2)
+        # Используем метод умножения столбиком (каждая цифра на каждую)
+        result_A = [0] * (self.n + other.n + 2)  # Массив для результата (с запасом)
         
-        for i in range(self.n + 1):
-            for j in range(other.n + 1):
+        # Перемножаем каждую цифру первого числа на каждую цифру второго
+        for i in range(self.n + 1):  # Цифры первого числа
+            for j in range(other.n + 1):  # Цифры второго числа
+                # Произведение цифр добавляем в соответствующий разряд результата
                 result_A[i + j] += self.A[i] * other.A[j]
         
-        # Обрабатывем переносы
-        for i in range(len(result_A) - 1):
-            result_A[i + 1] += result_A[i] // 10
-            result_A[i] %= 10
+        # Обрабатываем переносы
+        for i in range(len(result_A) - 1):  # Проходим все разряды
+            result_A[i + 1] += result_A[i] // 10  # Переносим десятки в следующий разряд
+            result_A[i] %= 10  # Оставляем только единицы в текущем разряде
         
         # Удаляем ведущие нули
         while len(result_A) > 1 and result_A[-1] == 0:
-            result_A.pop()
+            result_A.pop()  # Убираем старшие нули
         
-        self.A = result_A
-        self.n = len(result_A) - 1
+        self.A = result_A  # Записываем результат
+        self.n = len(result_A) - 1  # Обновляем индекс старшей позиции
         return self
     
     def SUB_NDN_N(self, other, d: int):
         """
+        N-9: Вычитание из натурального другого, умноженного на цифру
         Баневич 4384
         
         Принимает на вход: другое натуральное число (other), цифра d (0-9)
         Возвращает: self (изменённый объект)
         """
-        # Вспомогательный объект для вычисления other * d
+        # Создаём временную копию для вычисления other * d
         temp = NaturalModule(other.n, other.A.copy())
-        temp.MUL_ND_N(d)
+        temp.MUL_ND_N(d)  # Умножаем other на d
         
+        # Вычитаем результат из self
         self.SUB_NN_N(temp)
         return self
     
     def DIV_NN_Dk(self, other):
         """
+        N-10: Вычисление первой цифры деления большего натурального на меньшее
         Баневич 4384
         
         Принимает на вход: другое натуральное число (other)
         Возвращает: (d, k) - первая цифра частного и степень 10^k
         """
-        k = self.n - other.n
+        k = self.n - other.n  # Разница в количестве разрядов
         
-        # Если делимое меньше делителя, частное пустое
+        # Если делимое меньше делителя, частное 0
         if k < 0:
             return (0, 0)
         
         # Подбираем максимальную цифру d: d * other * 10^k <= self
-        for d in range(9, -1, -1):
-            temp = NaturalModule(other.n, other.A.copy())
-            temp.MUL_ND_N(d)
-            temp.MUL_Nk_N(k)
+        for d in range(9, -1, -1):  # Перебираем от 9 до 0
+            temp = NaturalModule(other.n, other.A.copy())  # Копируем делитель
+            temp.MUL_ND_N(d)  # Умножаем на цифру d
+            temp.MUL_Nk_N(k)  # Умножаем на 10^k
             
-            if temp.COM_NN_D(self) <= 1:
+            # Если temp <= self, нашли нужную цифру
+            if temp.COM_NN_D(self) <= 1:  # temp <= self или temp < self
                 return (d, k)
         
-        return (0, k)
+        return (0, k)  # На случай если ничего не подошло
     
     def DIV_NN_N(self, other):
         """
+        N-11: Неполное частное от деления первого натурального на второе
         Баневич 4384
         
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект) - неполное частное
         """
-        quotient_A = []
-        remainder = NaturalModule(0, [0])
+        quotient_A = []  # Массив для цифр частного
+        remainder = NaturalModule(0, [0])  # Остаток, изначально 0
         
-        # Процесс длинного деления
-        for i in range(self.n, -1, -1):
-            # Сдвигаем остаток влево и добавляем следующую цифру
-            if not (remainder.n == 0 and remainder.A[0] == 0):
-                remainder.MUL_Nk_N(1)
-            remainder.A[0] = self.A[i]
+        # Алгоритм длинного деления: обрабатываем цифры делимого от старшей
+        for i in range(self.n, -1, -1):  # Идём от старшей цифры к младшей
+            # Сдвигаем остаток влево и добавляем следующую цифру делимого
+            if not (remainder.n == 0 and remainder.A[0] == 0):  # Если остаток не 0
+                remainder.MUL_Nk_N(1)  # Сдвигаем влево (умножаем на 10)
+            remainder.A[0] = self.A[i]  # Добавляем текущую цифру делимого
             
-            # Обновляем n для остатка
-            while len(remainder.A) > 1 and remainder.A[-1] == 0:
+            # Обновляем индекс старшей позиции остатка
+            while len(remainder.A) > 1 and remainder.A[-1] == 0:  # Убираем ведущие нули
                 remainder.A.pop()
             remainder.n = len(remainder.A) - 1
             
-            # Находим максимальную цифру d
-            d = 0
-            for test_d in range(9, -1, -1):
-                temp = NaturalModule(other.n, other.A.copy())
-                temp.MUL_ND_N(test_d)
-                if temp.COM_NN_D(remainder) != 2:  # temp <= remainder
-                    d = test_d
+            # Находим максимальную цифру частного для текущей позиции
+            d = 0  # Изначально 0
+            for test_d in range(9, -1, -1):  # Перебираем от 9 до 0
+                temp = NaturalModule(other.n, other.A.copy())  # Копируем делитель
+                temp.MUL_ND_N(test_d)  # Умножаем на test_d
+                if temp.COM_NN_D(remainder) != 2:  # Если temp <= remainder
+                    d = test_d  # Нашли подходящую цифру
                     break
             
-            quotient_A.append(d)
+            quotient_A.append(d)  # Добавляем цифру в частное
             
             # Вычитаем d * other из остатка
-            if d > 0:
-                temp = NaturalModule(other.n, other.A.copy())
-                temp.MUL_ND_N(d)
-                remainder.SUB_NN_N(temp)
+            if d > 0:  # Если цифра не 0
+                temp = NaturalModule(other.n, other.A.copy())  # Копируем делитель
+                temp.MUL_ND_N(d)  # Умножаем на d
+                remainder.SUB_NN_N(temp)  # Вычитаем из остатка
         
+        # Переворачиваем массив цифр частного (собирали в обратном порядке)
         quotient_A.reverse()
     
         # Удаляем ведущие нули
         while len(quotient_A) > 1 and quotient_A[-1] == 0:
             quotient_A.pop()
         
-        self.A = quotient_A
-        self.n = len(quotient_A) - 1
+        self.A = quotient_A  # Записываем результат
+        self.n = len(quotient_A) - 1  # Обновляем индекс старшей позиции
         return self
     
     def MOD_NN_N(self, other):
         """
+        N-12: Остаток от деления первого натурального на второе
         Баневич 4384
         
         Принимает на вход: другое натуральное число (other)
         Возвращает: self (изменённый объект) - остаток
         """
         # Формула: остаток = делимое - (делимое // делитель) * делитель
-        quotient = NaturalModule(self.n, self.A.copy())
-        quotient.DIV_NN_N(other)
+        quotient = NaturalModule(self.n, self.A.copy())  # Копируем делимое
+        quotient.DIV_NN_N(other)  # Вычисляем частное
         
-        temp = NaturalModule(quotient.n, quotient.A.copy())
-        temp.MUL_NN_N(other)
+        temp = NaturalModule(quotient.n, quotient.A.copy())  # Копируем частное
+        temp.MUL_NN_N(other)  # Умножаем частное на делитель
         
-        self.SUB_NN_N(temp)
-        return self
+        self.SUB_NN_N(temp)  # Вычитаем из делимого
+        return self  # Остаток в self
     
     def GCF_NN_N(self, other):
         """
+        N-13: НОД натуральных чисел
         Баневич 4384
         
         Принимает на вход: другое натуральное число (other)
@@ -312,18 +338,18 @@ class NaturalModule:
         Использование в других методах: 1
         """
         # Алгоритм Евклида: НОД(a,b) = НОД(b, a mod b)
-        while other.NZER_N_B():
-            remainder = NaturalModule(self.n, self.A.copy())
-            remainder.MOD_NN_N(other)
+        while other.NZER_N_B():  # Пока other не равно 0
+            remainder = NaturalModule(self.n, self.A.copy())  # Копируем self
+            remainder.MOD_NN_N(other)  # Вычисляем остаток от деления self на other
             
+            # Меняем местами: self = other, other = remainder
             self.n = other.n
             self.A = other.A.copy()
             
             other.n = remainder.n
             other.A = remainder.A.copy()
         
-        return self
-
+        return self  # В self остался НОД
 
     def LCM_NN_N(self, other):
         """
