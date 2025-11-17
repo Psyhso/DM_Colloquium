@@ -203,6 +203,22 @@ class RationalModule:
         return self.RED_Q_Q()
 
 
+    def __ge__(self, other):
+
+        self_copy = RationalModule(
+            IntegerModule(self.up.b, self.up.n, self.up.A.copy()),
+            NaturalModule(self.down.n, self.down.A.copy())
+        )
+        other_copy = RationalModule(
+            IntegerModule(other.up.b, other.up.n, other.up.A.copy()),
+            NaturalModule(other.down.n, other.down.A.copy())
+        )
+        sub = self_copy.SUB_QQ_Q(other_copy)
+        if sub.up.POZ_Z_D() == 1 or sub.up.POZ_Z_D() == 0:
+            return True
+        return False
+
+
     def __str__(self):
         sign = "-" if self.up.b else ""
         return f"{sign}{''.join(map(str, self.up.A[::-1]))}/{''.join(map(str, self.down.A[::-1]))}"
