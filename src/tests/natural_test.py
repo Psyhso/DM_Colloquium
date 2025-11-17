@@ -2,6 +2,7 @@ import pytest
 from ..my_math.natural_module import NaturalModule
 
 
+
 # Тесты для COM_NN_D (N-1)
 @pytest.mark.parametrize("n1,A1,n2,A2,expected", [
     (3, [4, 3, 2, 1], 2, [7, 6, 5], 2),      # 1234 > 567
@@ -17,6 +18,7 @@ def test_com_nn_d(n1, A1, n2, A2, expected):
     assert num1.COM_NN_D(num2) == expected
 
 
+
 # Тесты для NZER_N_B (N-2)
 @pytest.mark.parametrize("n,A,expected", [
     (0, [0], False),                          # 0 - ноль
@@ -29,6 +31,7 @@ def test_nzer_n_b(n, A, expected):
     """NZER_N_B: Проверка на ноль"""
     num = NaturalModule(n, A)
     assert num.NZER_N_B() == expected
+
 
 
 # Тесты для ADD_1N_N (N-3)
@@ -47,6 +50,7 @@ def test_add_1n_n(n, A, expected_n, expected_A):
     assert result.A == expected_A
 
 
+
 # Тесты для MUL_ND_N (N-6)
 @pytest.mark.parametrize("n,A,d,expected_n,expected_A", [
     (2, [3, 2, 1], 0, 0, [0]),                # 123 * 0 = 0
@@ -63,6 +67,7 @@ def test_mul_nd_n(n, A, d, expected_n, expected_A):
     assert result.A == expected_A
 
 
+
 # Тесты для MUL_Nk_N (N-7)
 @pytest.mark.parametrize("n,A,k,expected_n,expected_A", [
     (0, [0], 3, 0, [0]),                      # 0 * 10^3 = 0
@@ -77,6 +82,7 @@ def test_mul_nk_n(n, A, k, expected_n, expected_A):
     result = num.MUL_Nk_N(k)
     assert result.n == expected_n
     assert result.A == expected_A
+
 
 
 # Тесты для ADD_NN_N (N-4)
@@ -96,9 +102,10 @@ def test_add_nn_n(n1, A1, n2, A2, expected_n, expected_A):
     assert result.A == expected_A
 
 
+
 # Тесты для SUB_NN_N (N-5)
 @pytest.mark.parametrize("n1,A1,n2,A2,expected_n,expected_A", [
-    (2, [0, 0, 1], 2, [3, 2, 1], 1, [7, 7]),          # 100 - 123 = -23 (но берём 100-23=77 для примера)
+    (2, [3, 2, 1], 2, [0, 0, 1], 1, [3, 2]),          # 123 - 100 = 23 (ИСПРАВЛЕНО)
     (2, [7, 6, 5], 2, [3, 2, 1], 2, [4, 4, 4]),       # 567 - 123 = 444
     (1, [0, 5], 1, [5, 2], 1, [5, 2]),                # 50 - 25 = 25
     (2, [3, 2, 1], 0, [1], 2, [2, 2, 1]),             # 123 - 1 = 122
@@ -113,12 +120,13 @@ def test_sub_nn_n(n1, A1, n2, A2, expected_n, expected_A):
     assert result.A == expected_A
 
 
+
 # Тесты для MUL_NN_N (N-8)
 @pytest.mark.parametrize("n1,A1,n2,A2,expected_n,expected_A", [
     (1, [2, 1], 1, [3, 2], 2, [6, 7, 2]),             # 12 * 23 = 276
     (0, [5], 0, [4], 1, [0, 2]),                      # 5 * 4 = 20
     (2, [3, 2, 1], 0, [2], 2, [6, 4, 2]),             # 123 * 2 = 246
-    (1, [9, 9], 1, [9, 9], 3, [1, 8, 9, 9]),          # 99 * 99 = 9801
+    (1, [9, 9], 1, [9, 9], 3, [1, 0, 8, 9]),          # 99 * 99 = 9801 (ИСПРАВЛЕНО)
     (0, [0], 2, [3, 2, 1], 0, [0])                    # 0 * 123 = 0
 ])
 def test_mul_nn_n(n1, A1, n2, A2, expected_n, expected_A):
@@ -130,12 +138,13 @@ def test_mul_nn_n(n1, A1, n2, A2, expected_n, expected_A):
     assert result.A == expected_A
 
 
+
 # Тесты для SUB_NDN_N (N-9)
 @pytest.mark.parametrize("n1,A1,n2,A2,d,expected_n,expected_A", [
     (2, [0, 0, 1], 1, [2, 1], 3, 1, [4, 6]),          # 100 - (12*3) = 100 - 36 = 64
     (2, [0, 5, 1], 1, [0, 2], 2, 2, [0, 1, 1]),       # 150 - (20*2) = 150 - 40 = 110
     (1, [0, 5], 0, [5], 4, 1, [0, 3]),                # 50 - (5*4) = 50 - 20 = 30
-    (2, [0, 0, 2], 1, [0, 5], 3, 2, [0, 5, 0])        # 200 - (50*3) = 200 - 150 = 50
+    (2, [0, 0, 2], 1, [0, 5], 3, 1, [0, 5])           # 200 - (50*3) = 200 - 150 = 50 (ИСПРАВЛЕНО)
 ])
 def test_sub_ndn_n(n1, A1, n2, A2, d, expected_n, expected_A):
     """SUB_NDN_N: Вычитание из натурального другого, умноженного на цифру"""
@@ -146,13 +155,15 @@ def test_sub_ndn_n(n1, A1, n2, A2, d, expected_n, expected_A):
     assert result.A == expected_A
 
 
+
 # Тесты для DIV_NN_Dk (N-10)
 @pytest.mark.parametrize("n1,A1,n2,A2,expected_d,expected_k", [
     (2, [6, 5, 4], 1, [2, 1], 3, 1),                  # 456 / 12 -> (3, 1) т.к. 3*12*10=360<=456
     (1, [0, 5], 0, [5], 1, 1),                        # 50 / 5 -> (1, 1) т.к. 1*5*10=50
-    (2, [0, 0, 1], 1, [0, 5], 2, 1),                  # 100 / 50 -> (2, 1) т.к. 2*50*10=1000>100, но 2*50*1=100
+    (2, [0, 0, 2], 1, [0, 2], 1, 1),                  # 200 / 20 -> (1, 1) т.к. 1*20*10=200
     (0, [5], 1, [0, 1], 0, 0)                         # 5 / 10 -> (0, 0) т.к. делимое меньше
 ])
+
 def test_div_nn_dk(n1, A1, n2, A2, expected_d, expected_k):
     """DIV_NN_Dk: Первая цифра деления"""
     num1 = NaturalModule(n1, A1.copy())
@@ -160,6 +171,7 @@ def test_div_nn_dk(n1, A1, n2, A2, expected_d, expected_k):
     d, k = num1.DIV_NN_Dk(num2)
     assert d == expected_d
     assert k == expected_k
+
 
 
 # Тесты для DIV_NN_N (N-11)
@@ -179,6 +191,7 @@ def test_div_nn_n(n1, A1, n2, A2, expected_n, expected_A):
     assert result.A == expected_A
 
 
+
 # Тесты для MOD_NN_N (N-12)
 @pytest.mark.parametrize("n1,A1,n2,A2,expected_n,expected_A", [
     (2, [6, 5, 4], 1, [2, 1], 0, [0]),                # 456 % 12 = 0
@@ -194,6 +207,7 @@ def test_mod_nn_n(n1, A1, n2, A2, expected_n, expected_A):
     result = num1.MOD_NN_N(num2)
     assert result.n == expected_n
     assert result.A == expected_A
+
 
 
 # Тесты для GCF_NN_N (N-13)
@@ -213,17 +227,22 @@ def test_gcf_nn_n(n1, A1, n2, A2, expected_n, expected_A):
     assert result.A == expected_A
     
 
+
 @pytest.mark.parametrize("N_1, N_2, expected", [
     (NaturalModule(0, [9]), NaturalModule(1, [2, 1]), NaturalModule(1, [6, 3])),
 
+
 ])
+
 
 def test_LCM_NN_N(N_1, N_2, expected):
     natural_1 = NaturalModule(N_1.n, N_1.A)
     natural_2 = NaturalModule(N_2.n, N_2.A)
 
+
     natural_1.LCM_NN_N(natural_2)
     print(natural_1.n, natural_1.A)
     print(expected.n, expected.A)
+
 
     assert natural_1.n == expected.n and natural_1.A == expected.A
