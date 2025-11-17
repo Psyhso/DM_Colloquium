@@ -118,7 +118,7 @@ class IntegerModule:
             return IntegerModule(0, 0, [0])
         
         # Модуль первого числа больше
-        if comparison == 2:
+        elif comparison == 2:
             result_abs = abs_a.SUB_NN_N(abs_b)
             # Результат имеет знак первого числа
             if sign_a == 1:
@@ -127,7 +127,7 @@ class IntegerModule:
                 return IntegerModule(1, result_abs.n, result_abs.A)
         
         # Модуль второго числа больше
-        if comparison == 1:
+        else:
             result_abs = abs_b.SUB_NN_N(abs_a)
             # Результат имеет знак второго числа
             if sign_b == 1:

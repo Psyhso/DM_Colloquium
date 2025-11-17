@@ -75,9 +75,9 @@ def test_trans_n_z(natural_n, natural_A, expected_b, expected_n):
 def test_trans_z_n_valid(b, n, A, expected_n, expected_A):
     """TRANS_Z_N: Преобразование неотрицательного целого в натуральное"""
     num = IntegerModule(b, n, A)
-    result_n, result_A = num.TRANS_Z_N()
-    assert result_n == expected_n
-    assert result_A == expected_A
+    result = num.TRANS_Z_N()
+    assert result.n == expected_n
+    assert result.A == expected_A
 
 
 @pytest.mark.parametrize("b,n,A", [
@@ -90,3 +90,119 @@ def test_trans_z_n_negative_raises_error(b, n, A):
     num = IntegerModule(b, n, A)
     with pytest.raises(ValueError, match="Отрицательное число не подходит для преобразования в натуральное"):
         num.TRANS_Z_N()
+
+
+# Тесты для ADD_ZZ_Z (Z-6)
+@pytest.mark.parametrize("b1,n1,A1,b2,n2,A2,expected_b,expected_n,expected_A", [
+    (0, 1, [5], 0, 1, [3], 0, 1, [8]),           # 5 + 3 = 8
+    (1, 2, [1, 2], 1, 1, [5], 1, 2, [6, 2]),     # -21 + (-5) = -26
+    (0, 1, [5], 1, 1, [3], 0, 1, [2]),           # 5 + (-3) = 2
+    (1, 1, [5], 0, 1, [3], 1, 1, [2]),           # -5 + 3 = -2
+    (0, 3, [9, 9, 9], 0, 1, [1], 0, 3, [0, 0, 0, 1])  # 999 + 1 = 1000
+])
+def test_add_zz_z(b1, n1, A1, b2, n2, A2, expected_b, expected_n, expected_A):
+    """ADD_ZZ_Z: Сложение целых чисел"""
+    num1 = IntegerModule(b1, n1, A1)
+    num2 = IntegerModule(b2, n2, A2)
+    result = num1.ADD_ZZ_Z(num2)
+    assert result.b == expected_b
+    assert result.n == expected_n
+    assert result.A == expected_A
+
+
+# Тесты для SUB_ZZ_Z (Z-7)
+@pytest.mark.parametrize("b1,n1,A1,b2,n2,A2,expected_b,expected_n,expected_A", [
+    (0, 1, [5], 0, 1, [3], 0, 1, [2]),           # 5 - 3 = 2
+    (0, 1, [3], 0, 1, [5], 1, 1, [2]),           # 3 - 5 = -2
+    (1, 1, [5], 1, 1, [3], 1, 1, [2]),           # -5 - (-3) = -2
+    (1, 1, [3], 1, 1, [5], 0, 1, [2]),           # -3 - (-5) = 2
+    (0, 1, [5], 1, 1, [3], 0, 1, [8]),           # 5 - (-3) = 8
+    (1, 1, [5], 0, 1, [3], 1, 1, [8]),           # -5 - 3 = -8
+])
+def test_sub_zz_z(b1, n1, A1, b2, n2, A2, expected_b, expected_n, expected_A):
+    """SUB_ZZ_Z: Вычитание целых чисел"""
+    num1 = IntegerModule(b1, n1, A1)
+    num2 = IntegerModule(b2, n2, A2)
+    result = num1.SUB_ZZ_Z(num2)
+    assert result.b == expected_b
+    assert result.n == expected_n
+    assert result.A == expected_A
+
+
+# Тесты для MUL_ZZ_Z (Z-8)
+@pytest.mark.parametrize("b1,n1,A1,b2,n2,A2,expected_b,expected_n,expected_A", [
+    (0, 1, [5], 0, 1, [3], 0, 1, [5, 1]),        # 5 * 3 = 15
+    (1, 1, [5], 1, 1, [3], 0, 1, [5, 1]),        # -5 * -3 = 15
+    (0, 1, [5], 1, 1, [3], 1, 1, [5, 1]),        # 5 * -3 = -15
+    (1, 1, [5], 0, 1, [3], 1, 1, [5, 1]),        # -5 * 3 = -15
+    (0, 1, [5], 0, 0, [0], 0, 0, [0]),           # 5 * 0 = 0
+    (1, 1, [5], 0, 0, [0], 0, 0, [0]),           # -5 * 0 = 0
+])
+def test_mul_zz_z(b1, n1, A1, b2, n2, A2, expected_b, expected_n, expected_A):
+    """MUL_ZZ_Z: Умножение целых чисел"""
+    num1 = IntegerModule(b1, n1, A1)
+    num2 = IntegerModule(b2, n2, A2)
+    result = num1.MUL_ZZ_Z(num2)
+    assert result.b == expected_b
+    assert result.n == expected_n
+    assert result.A == expected_A
+
+
+# Тесты для DIV_ZZ_Z (Z-9)
+@pytest.mark.parametrize("b1,n1,A1,b2,n2,A2,expected_b,expected_n,expected_A", [
+    (0, 2, [5, 1], 0, 1, [5], 0, 1, [3]),        # 15 / 5 = 3
+    (0, 1, [7], 0, 1, [3], 0, 1, [2]),           # 7 / 3 = 2
+    (1, 1, [7], 1, 1, [3], 0, 1, [2]),           # -7 / -3 = 2
+    (0, 2, [5, 1], 1, 1, [5], 1, 1, [3]),        # 15 / -5 = -3
+    (1, 1, [7], 0, 1, [3], 1, 1, [3]),           # -7 / 3 = -3
+    (0, 1, [7], 0, 1, [1], 0, 1, [7]),           # 7 / 1 = 7
+    (1, 1, [7], 0, 1, [1], 1, 1, [7]),           # -7 / 1 = -7
+    (0, 1, [2], 0, 1, [5], 0, 0, [0]),           # 2 / 5 = 0
+    (1, 1, [2], 0, 1, [5], 1, 0, [1]),           # -2 / 5 = -1
+])
+def test_div_zz_z(b1, n1, A1, b2, n2, A2, expected_b, expected_n, expected_A):
+    """DIV_ZZ_Z: Деление целых чисел"""
+    num1 = IntegerModule(b1, n1, A1)
+    num2 = IntegerModule(b2, n2, A2)
+    result = num1.DIV_ZZ_Z(num2)
+    assert result.b == expected_b
+    assert result.n == expected_n
+    assert result.A == expected_A
+
+
+# Тесты для MOD_ZZ_Z (Z-10)
+@pytest.mark.parametrize("b1,n1,A1,b2,n2,A2,expected_b,expected_n,expected_A", [
+    (0, 1, [7], 0, 1, [3], 0, 1, [1]),           # 7 % 3 = 1
+    (0, 1, [8], 0, 1, [4], 0, 0, [0]),           # 8 % 4 = 0
+    (0, 1, [5], 0, 1, [2], 0, 1, [1]),           # 5 % 2 = 1
+    (1, 1, [7], 1, 1, [3], 1, 1, [1]),           # -7 % -3 = -1
+    (1, 1, [8], 1, 1, [4], 0, 0, [0]),           # -8 % -4 = 0
+    (0, 1, [7], 1, 1, [3], 0, 1, [1]),           # 7 % -3 = 1
+    (1, 1, [7], 0, 1, [3], 1, 1, [2]),           # -7 % 3 = 2
+    (0, 1, [7], 0, 1, [1], 0, 0, [0]),           # 7 % 1 = 0
+    (1, 1, [7], 0, 1, [1], 0, 0, [0]),           # -7 % 1 = 0
+])
+def test_mod_zz_z(b1, n1, A1, b2, n2, A2, expected_b, expected_n, expected_A):
+    """MOD_ZZ_Z: Остаток от деления целых чисел"""
+    num1 = IntegerModule(b1, n1, A1)
+    num2 = IntegerModule(b2, n2, A2)
+    result = num1.MOD_ZZ_Z(num2)
+    assert result.b == expected_b
+    assert result.n == expected_n
+    assert result.A == expected_A
+
+
+# Тест на деление на ноль
+def test_div_by_zero():
+    """DIV_ZZ_Z: Деление на ноль должно вызывать исключение"""
+    num1 = IntegerModule(0, 1, [5])
+    num2 = IntegerModule(0, 0, [0])
+    with pytest.raises(Exception, match="Деление на ноль запрещено"):
+        num1.DIV_ZZ_Z(num2)
+
+def test_mod_by_zero():
+    """MOD_ZZ_Z: Остаток от деления на ноль должен вызывать исключение"""
+    num1 = IntegerModule(0, 1, [5])
+    num2 = IntegerModule(0, 0, [0])
+    with pytest.raises(Exception, match="Деление на ноль"):
+        num1.MOD_ZZ_Z(num2)
