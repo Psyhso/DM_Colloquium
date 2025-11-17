@@ -514,14 +514,24 @@ class RealModule:
             NaturalModule(c.down.n, c.down.A.copy())       # Копируем знаменатель
         ) for c in other.C])
 
-        def is_zero_poly(p):
-            """Проверка: все коэффициенты равны 0?"""
+        def is_zero_poly(p: "RealModule") -> bool:
+            """
+            Проверка: все коэффициенты равны 0.
+
+            coef.up.POZ_Z_D():
+            0 – число = 0
+            1 – > 0
+            2 – < 0
+            """
             for coef in p.C:
-                # Проверяем, что коэффициент не равен нулю
-                # coef.up.n == 0 - длина массива цифр = 0 (число 0)
-                # coef.up.A[0] == 0 - единственная цифра = 0
-                if not (coef.up.n == 0 and coef.up.A[0] == 0):
-                    return False
+                try:
+                    if coef.up.POZ_Z_D() != 0:
+                        return False
+                except Exception:
+                    # На всякий случай: если внутреннее представление "битое",
+                    # но есть хотя бы одна ненулевая цифра, считаем коэффициент ненулевым.
+                    if getattr(coef.up, "A", None) and any(d != 0 for d in coef.up.A):
+                        return False
             return True
 
         # Алгоритм Евклида с улучшенными условиями остановки

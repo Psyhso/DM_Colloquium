@@ -1,20 +1,19 @@
+import traceback
 from flask import Flask, render_template, url_for, redirect, request, flash, session
 from flask_bootstrap import Bootstrap
-from werkzeug.security import generate_password_hash, check_password_hash
-import os
 
 from validation.natural_expression_parser import NatExpressionParser
 from validation.integer_expression_parser import IntExpressionParser
 from validation.rational_expression_parser import RatExpressionParser
+from validation.polynomial_expression_parser import PolExpressionParser
 from my_math.natural_module import NaturalModule
 from my_math.integer_module import IntegerModule
-from my_math.rational_module import RationalModule
 
 
 app = Flask(__name__)
 Bootstrap(app)
 
-app.config['SECRET_KEY'] = "a-fixed-secret-key-for-development"
+app.config['SECRET_KEY'] = "secret_key_XD"
 
 
 @app.route('/')
@@ -112,6 +111,7 @@ def rational():
 
     return render_template('rational.html', history=session.get('rational_history', []))
 
+
 @app.route('/rational/clear', methods=['POST'])
 def clear_rational_history():
     session['rational_history'] = []
@@ -122,9 +122,36 @@ def clear_rational_history():
 
 @app.route('/polynomial', methods=['GET', 'POST'])
 def polynomial():
-    if request.method == "POST":
-        math_exp = request.form['math_exp']
-    return render_template("natural.html")
+    if 'polynomial_history' not in session:
+        session['polynomial_history'] = []
+
+    if request.method == 'POST':
+        expression = request.form.get('math_exp')
+        try:
+            parser = PolExpressionParser()
+            result = parser.evaluate(expression)
+            session['polynomial_history'].append({
+                'expression': expression,
+                'result': result
+            })
+            session.modified = True
+            flash('Вычисление выполнено успешно!', 'success')
+
+        except Exception as e:
+            flash(f'Ошибка: {str(e)}', 'danger')
+            traceback.print_exc()
+
+        return redirect(url_for('polynomial'))
+
+    return render_template('polin.html', history=session.get('polynomial_history', []))
+
+
+@app.route('/polynomial/clear', methods=['POST'])
+def clear_polynomial_history():
+    session['polynomial_history'] = []
+    session.modified = True
+    flash('История очищена', 'info')
+    return redirect(url_for('polynomial'))
 
 
 if __name__ == '__main__':
