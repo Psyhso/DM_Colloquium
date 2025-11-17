@@ -189,82 +189,93 @@ class IntegerModule:
         if other.POZ_Z_D() == 0:
             raise Exception("Деление на ноль запрещено")
 
-        sign_a = self.POZ_Z_D()
-        sign_b = other.POZ_Z_D()
+        # Определяем знаки делимого и делителя
+        sign_a = self.POZ_Z_D()  # знак делимого (0 - ноль, 1 - положительное, -1 - отрицательное)
+        sign_b = other.POZ_Z_D()  # знак делителя
 
-        # Если делимое равно нулю
+        # Если делимое равно нулю, результат тоже ноль
         if sign_a == 0:
             return IntegerModule(0, 0, [0])
 
-        # Получаем модули чисел (создаем копии)
-        abs_a = NaturalModule(self.n, self.A.copy())
-        abs_b = NaturalModule(other.n, other.A.copy())
+        # Получаем натуральные модули чисел (создаем копии, чтобы не изменять исходные)
+        abs_a = NaturalModule(self.n, self.A.copy())  # модуль делимого
+        abs_b = NaturalModule(other.n, other.A.copy())  # модуль делителя
 
-        # Сравниваем модули
-        comparison = abs_a.COM_NN_D(abs_b)
+        # Сравниваем модули чисел
+        comparison = abs_a.COM_NN_D(abs_b)  # 0 - равны, 1 - первое меньше, 2 - первое больше
 
         # Если модуль делимого меньше модуля делителя
         if comparison == 1:
+            # Результат будет 0, 1 или -1 в зависимости от комбинации знаков
             if sign_a == 1 and sign_b == 1:
+                # Оба положительные: положительное / положительное = 0
                 return IntegerModule(0, 0, [0])  
             elif sign_a == 1 and sign_b == -1:
+                # Положительное / отрицательное = 0 (отрицательный ноль не имеет смысла, но для целостности)
                 return IntegerModule(1, 0, [0])  
             elif sign_a == -1 and sign_b == 1:
-                # Для отрицательного делимого и положительного делителя
-                # результат должен быть -1
+                # Отрицательное / положительное = -1 (округление в меньшую сторону)
                 return IntegerModule(1, 0, [1])  # -1
             else:  # оба отрицательные
+                # Отрицательное / отрицательное = 1 (округление в большую сторону)
                 return IntegerModule(0, 0, [1])  # 1
         else:
-            # Вычисляем частное модулей
+            # Модуль делимого больше или равен модулю делителя
+            # Вычисляем частное модулей (натуральное деление)
             q0 = NaturalModule(abs_a.n, abs_a.A.copy())
-            q0.DIV_NN_N(abs_b)
+            q0.DIV_NN_N(abs_b)  # q0 = abs_a // abs_b
 
-            # Вычисляем остаток от деления модулей
+            # Вычисляем остаток от деления модулей для проверки точности деления
             product = NaturalModule(abs_b.n, abs_b.A.copy())
-            product.MUL_NN_N(q0)
+            product.MUL_NN_N(q0)  # product = abs_b * q0
             r0 = NaturalModule(abs_a.n, abs_a.A.copy())
-            r0.SUB_NN_N(product)
+            r0.SUB_NN_N(product)  # r0 = abs_a - (abs_b * q0) = остаток
 
-            # Проверяем, равен ли остаток нулю
+            # Проверяем, равен ли остаток нулю (деление нацело)
             is_zero_remainder = (r0.n == 0 and r0.A[0] == 0)
 
-            # Определяем знак и корректируем частное
+            # Определяем знак результата и корректируем частное в зависимости от комбинации знаков
             if sign_a == 1 and sign_b == 1:
                 # Оба положительные - результат положительный
                 result_sign = 0
-                q_result = q0
+                q_result = q0  # без изменений
             elif sign_a == 1 and sign_b == -1:
                 # Делимое положительное, делитель отрицательный - результат отрицательный
                 result_sign = 1
-                q_result = q0
+                q_result = q0  # без изменений
             elif sign_a == -1 and sign_b == 1:
                 # Делимое отрицательное, делитель положительный
                 if is_zero_remainder:
+                    # Деление нацело - результат отрицательный
                     result_sign = 1
                     q_result = q0
                 else:
-                    # Увеличиваем частное на 1 и делаем отрицательным
+                    # Есть остаток - увеличиваем частное на 1 и делаем отрицательным
+                    # (целочисленное деление с округлением в меньшую сторону)
                     result_sign = 1
                     one = NaturalModule(0, [1])
                     q_result = NaturalModule(q0.n, q0.A.copy())
-                    q_result.ADD_NN_N(one)
+                    q_result.ADD_NN_N(one)  # q_result = q0 + 1
             else:
                 # Оба отрицательные
                 if is_zero_remainder:
+                    # Деление нацело - результат положительный
                     result_sign = 0
                     q_result = q0
                 else:
-                    # Увеличиваем частное на 1 и делаем положительным
+                    # Есть остаток - увеличиваем частное на 1 и делаем положительным
+                    # (целочисленное деление с округлением в большую сторону)
                     result_sign = 0
                     one = NaturalModule(0, [1])
                     q_result = NaturalModule(q0.n, q0.A.copy())
-                    q_result.ADD_NN_N(one)
+                    q_result.ADD_NN_N(one)  # q_result = q0 + 1
 
             # Если частное равно нулю, устанавливаем положительный знак
+            # (отрицательный ноль не имеет смысла в целых числах)
             if q_result.n == 0 and q_result.A[0] == 0:
                 result_sign = 0
 
+            # Возвращаем результат в виде целого числа
             return IntegerModule(result_sign, q_result.n, q_result.A)
 
     def MOD_ZZ_Z(self, other):
@@ -274,20 +285,24 @@ class IntegerModule:
         Принимаемые значения: другое целое число (other)
         Возвращает: остаток от деления self на other
         """
+        # Создаем копию делимого, чтобы не изменять исходный объект
         a = IntegerModule(self.b, self.n, self.A)
+        
         # Проверка деления на ноль
         if other.POZ_Z_D() == 0:
             raise Exception("Деление на ноль")
 
-        # Вычисляем частное
+        # Вычисляем неполное частное (целочисленное деление)
         q = self.DIV_ZZ_Z(other)
 
-        # Вычисляем произведение other * q
+        # Вычисляем произведение делителя на частное: other * q
         product = other.MUL_ZZ_Z(q)
 
-        # Вычисляем остаток как self - product
+        # Вычисляем остаток как разность: self - (other * q)
+        # Формула: remainder = dividend - (divisor * quotient)
         remainder = a.SUB_ZZ_Z(product)
 
+        # Возвращаем остаток от деления
         return remainder
 
     def __str__(self) -> str:
