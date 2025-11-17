@@ -1,5 +1,5 @@
 import pytest
-from my_math.integer_module import IntegerModule
+from ..my_math.integer_module import IntegerModule
 
 
 # Тесты для ABS_Z_Z (Z-1)
