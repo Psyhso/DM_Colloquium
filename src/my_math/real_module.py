@@ -180,10 +180,7 @@ class RealModule:
         1. Если все коэффициенты нулевые, вернуть 1/1
         2. Найти НОК всех знаменателей коэффициентов 
         3. Найти НОД всех числителей коэффициентов (взятых по модулю) 
-           - Для каждого числителя получить его модуль 
-           - Вычислить НОД полученных натуральных чисел
-        4. Преобразовать НОК знаменателей в целое число 
-        5. Вернуть рациональное число: НОК знаменателей / НОД числителей
+        4. Вернуть рациональное число: НОД числителей / НОК знаменателей
         """
         # Если многочлен нулевой, возвращаем 1/1
         if all(coef.up.A == [0] for coef in self.C):
@@ -198,8 +195,7 @@ class RealModule:
                 if lcm_denom is None:
                     lcm_denom = NaturalModule(coef.down.n, coef.down.A.copy())
                 else:
-                    current_denom = NaturalModule(
-                        coef.down.n, coef.down.A.copy())
+                    current_denom = NaturalModule(coef.down.n, coef.down.A.copy())
                     lcm_denom = lcm_denom.LCM_NN_N(current_denom)
 
         # Находим НОД всех числителей (взятых по модулю)
@@ -221,12 +217,12 @@ class RealModule:
             one_natural = NaturalModule(0, [1])
             return RationalModule(one_int, one_natural)
 
-        # Преобразуем НОК знаменателей в целое число
-        lcm_int = IntegerModule(0, 0, [0])
-        lcm_int = lcm_int.TRANS_N_Z(lcm_denom.n, lcm_denom.A.copy())
+        # Преобразуем НОД числителей в целое число
+        gcd_int = IntegerModule(0, 0, [0])
+        gcd_int = gcd_int.TRANS_N_Z(gcd_num.n, gcd_num.A.copy())
 
-        # Создаем результирующее рациональное число
-        return RationalModule(lcm_int, gcd_num)
+        # Создаем результирующее рациональное число: НОД_числителей / НОК_знаменателей
+        return RationalModule(gcd_int, lcm_denom)
 
     def MUL_PP_P(self, other):
         """
