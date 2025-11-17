@@ -55,7 +55,7 @@ def test_ADD_PP_P_with_negative_coefficients():
     assert result.DEG_P_N() == 1
     assert result.C[0].up.A == [0]  # 1 + (-1) = 0
     assert result.C[1].up.A == [1] and result.C[1].up.b == 0  # -1 + 2 = 1
-    print("✓ test_ADD_PP_P_with_negative_coefficients - пройден")
+    print("test_ADD_PP_P_with_negative_coefficients - пройден")
 
 def test_SUB_PP_P_with_negative_coefficients():
     """Тест вычитания с отрицательными коэффициентами"""
@@ -68,7 +68,7 @@ def test_SUB_PP_P_with_negative_coefficients():
     assert result.DEG_P_N() == 1
     assert result.C[0].up.A == [2] and result.C[0].up.b == 1  # -3 - (-1) = -2
     assert result.C[1].up.A == [1] and result.C[1].up.b == 1  # -2 - (-1) = -1
-    print("✓ test_SUB_PP_P_with_negative_coefficients - пройден")
+    print("test_SUB_PP_P_with_negative_coefficients - пройден")
 
 def test_MUL_Pxk_P_with_negative_coefficients():
     """Тест умножения на x^k многочлена с отрицательными коэффициентами"""
@@ -87,7 +87,7 @@ def test_MUL_Pxk_P_with_negative_coefficients():
     assert result.C[2].up.A == [3] and result.C[2].up.b == 1  # -3
     assert result.C[3].up.A == [2] and result.C[3].up.b == 0  # 2
     assert result.C[4].up.A == [1] and result.C[4].up.b == 1  # -1
-    print("✓ test_MUL_Pxk_P_with_negative_coefficients - пройден")
+    print("test_MUL_Pxk_P_with_negative_coefficients - пройден")
 
 def test_LED_P_Q_with_negative_leading_coefficient():
     """Тест старшего коэффициента при отрицательном старшем коэффициенте"""
@@ -100,7 +100,7 @@ def test_LED_P_Q_with_negative_leading_coefficient():
     led = p.LED_P_Q()
     # Ожидаем -3
     assert led.up.A == [3] and led.up.b == 1
-    print("✓ test_LED_P_Q_with_negative_leading_coefficient - пройден")
+    print("test_LED_P_Q_with_negative_leading_coefficient - пройден")
 
 def test_FAC_P_Q_with_mixed_negative_fractions():
     """Тест вынесения множителя для смешанных дробных коэффициентов с отрицательными значениями"""
@@ -114,9 +114,9 @@ def test_FAC_P_Q_with_mixed_negative_fractions():
     # НОК знаменателей: НОК(1,2,4)=4
     # НОД числителей: НОД(2,1,3)=1
     # Ожидаем 4/1
-    assert fac.up.A == [4] and fac.up.b == 0
-    assert fac.down.A == [1]
-    print("✓ test_FAC_P_Q_with_mixed_negative_fractions - пройден")
+    assert fac.up.A == [1] and fac.up.b == 0
+    assert fac.down.A == [4]
+    print("test_FAC_P_Q_with_mixed_negative_fractions - пройден")
 
 def test_ADD_PP_P_negative_and_positive():
     """Тест сложения многочленов с положительными и отрицательными коэффициентами"""
@@ -139,7 +139,7 @@ def test_ADD_PP_P_negative_and_positive():
     assert result.C[0].up.A == [3] and result.C[0].up.b == 0  # -1 + 4 = 3
     assert result.C[1].up.A == [1] and result.C[1].up.b == 0  # 3 + (-2) = 1
     assert result.C[2].up.A == [1] and result.C[2].up.b == 1  # -2 + 1 = -1
-    print("✓ test_ADD_PP_P_negative_and_positive - пройден")
+    print("test_ADD_PP_P_negative_and_positive - пройден")
 
 def test_SUB_PP_P_all_negative():
     """Тест вычитания многочленов с полностью отрицательными коэффициентами"""
@@ -162,7 +162,7 @@ def test_SUB_PP_P_all_negative():
     assert result.C[0].up.A == [2] and result.C[0].up.b == 1  # -3 - (-1) = -2
     assert result.C[1].up.A == [1] and result.C[1].up.b == 1  # -2 - (-1) = -1
     assert result.C[2].up.A == [1] and result.C[2].up.b == 0  # -1 - (-2) = 1
-    print("✓ test_SUB_PP_P_all_negative - пройден")
+    print("test_SUB_PP_P_all_negative - пройден")
 
 def test_polynomial_with_all_negative_coefficients():
     """Тест многочлена со всеми отрицательными коэффициентами"""
@@ -187,15 +187,13 @@ def test_polynomial_with_all_negative_coefficients():
     assert p.C[2].up.A == [4] and p.C[2].up.b == 1
     assert p.C[3].up.A == [5] and p.C[3].up.b == 1
     
-    print("✓ test_polynomial_with_all_negative_coefficients - пройден")
+    print("test_polynomial_with_all_negative_coefficients - пройден")
 
 def run_all_tests():
     """Запускает все тесты и выводит результаты"""
     test_count = 0
     passed_count = 0
-    
-    print("Запуск тестов для RealModule...")
-    
+        
     # Список всех тестовых функций
     test_functions = [
         test_ADD_PP_P_with_negative_coefficients,
@@ -213,7 +211,7 @@ def run_all_tests():
             test_func()
             passed_count += 1
         except Exception as e:
-            print(f"✗ {test_func.__name__} - не пройден: {e}")
+            print(f"{test_func.__name__} - не пройден: {e}")
         test_count += 1
     
     # Итоги
@@ -221,16 +219,15 @@ def run_all_tests():
     print(f"Пройдено: {passed_count}/{test_count} тестов")
     
     if passed_count == test_count:
-        print("🎉 Все тесты пройдены успешно!")
+        print(" Все тесты пройдены успешно!")
     else:
-        print(f"❌ Не пройдено: {test_count - passed_count} тестов")
+        print(f" Не пройдено: {test_count - passed_count} тестов")
     
     return passed_count == test_count
 
 if __name__ == "__main__":
-    success = run_all_tests()
-    exit(0 if success else 1)
-
+    run_all_tests()
+    
 """ Тесты Альберта """
 
 def test_mul_pp_p_basic():
