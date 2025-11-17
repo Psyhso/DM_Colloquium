@@ -1,7 +1,7 @@
 import pytest
-from my_math.rational_module import RationalModule
-from my_math.integer_module import IntegerModule
-from my_math.natural_module import NaturalModule
+from ..my_math.rational_module import RationalModule
+from ..my_math.integer_module import IntegerModule
+from ..my_math.natural_module import NaturalModule
 
 
 def test_int_q_b():
@@ -83,8 +83,3 @@ def test_trans_q_z():
     print(f"3/2 -> {result3}")
 
     print()
-
-
-test_int_q_b()
-test_trans_z_q()
-test_trans_q_z()

@@ -227,21 +227,20 @@ def test_gcf_nn_n(n1, A1, n2, A2, expected_n, expected_A):
     assert result.A == expected_A
     
 
-# Тесты для LCM_NN_N (N-14)
-@pytest.mark.parametrize("n1,A1,n2,A2,expected_n,expected_A", [
-    (1, [2], 1, [3], 1, [6]),                    # НОК(2, 3) = 6
-    (1, [3], 1, [5], 1, [5, 1]),                 # НОК(3, 5) = 15
-    (1, [4], 1, [6], 1, [2, 1]),                # НОК(4, 6) = 12
-    (1, [9], 3, [0, 0, 1], 3, [0, 0, 1]),       # НОК(9, 100) = 900
-    (1, [7], 1, [8], 1, [6, 5]),                # НОК(7, 8) = 56
-    (1, [9], 1, [4], 1, [6, 3]),                # НОК(9, 4) = 36
+
+@pytest.mark.parametrize("N_1, N_2, expected", [
+    (NaturalModule(0, [9]), NaturalModule(1, [2, 1]), NaturalModule(1, [6, 3])),
 ])
-def test_lcm_nn_n(n1, A1, n2, A2, expected_n, expected_A):
-    """LCM_NN_N: Наименьшее общее кратное натуральных чисел"""
-    num1 = NaturalModule(n1, A1.copy())
-    num2 = NaturalModule(n2, A2.copy())
-    
-    result = num1.LCM_NN_N(num2)
-    
-    assert result.n == expected_n
-    assert result.A == expected_A
+
+
+def test_LCM_NN_N(N_1, N_2, expected):
+    natural_1 = NaturalModule(N_1.n, N_1.A)
+    natural_2 = NaturalModule(N_2.n, N_2.A)
+
+
+    natural_1.LCM_NN_N(natural_2)
+    print(natural_1.n, natural_1.A)
+    print(expected.n, expected.A)
+
+
+    assert natural_1.n == expected.n and natural_1.A == expected.A

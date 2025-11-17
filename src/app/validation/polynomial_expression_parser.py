@@ -414,7 +414,6 @@ class PolExpressionParser(MathExpressionParser):
             # ---- ФУНКЦИЯ NMR(P) ----
             elif token == 'NMR':
                 poly = stack.pop()
-                print(str(poly))
                 nmr = poly.NMR_P_P()  # RealModule
                 stack.append(nmr)
 
