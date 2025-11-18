@@ -221,4 +221,8 @@ class RationalModule:
 
     def __str__(self):
         sign = "-" if self.up.b else ""
+        if self.up.A == [0]:
+            return "0"
+        if self.down.A == [1]:
+            return f"{sign}{''.join(map(str, self.up.A[::-1]))}
         return f"{sign}{''.join(map(str, self.up.A[::-1]))}/{''.join(map(str, self.down.A[::-1]))}"
