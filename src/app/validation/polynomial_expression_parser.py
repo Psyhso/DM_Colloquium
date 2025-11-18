@@ -341,7 +341,14 @@ class PolExpressionParser(MathExpressionParser):
                     exponent_poly = stack.pop()
                     base_poly = stack.pop()
 
-                    # exponent_poly — полином степени 0, берём его коэффициент
+                    # пытаемся распознать случай base_poly = x
+                    is_x_poly = (
+                        base_poly.m == 1 and
+                        base_poly.C[0].up.POZ_Z_D() == 0 and      # C[0] = 0
+                        base_poly.C[1].up.POZ_Z_D() == 1 and      # C[1] = 1
+                        base_poly.C[1].down.n == 0 and base_poly.C[1].down.A[0] == 1   # знаменатель = 1
+                    )
+
                     exp_coef = exponent_poly.C[0]
                     sign = -1 if exp_coef.up.b == 1 else 1
                     val = 0
@@ -351,13 +358,14 @@ class PolExpressionParser(MathExpressionParser):
                     if k < 0:
                         raise ValueError("Степень должна быть неотрицательной")
 
-                    one = RationalModule(
-                        IntegerModule(0, 0, [1]),
-                        NaturalModule(0, [1])
-                    )
-                    result = self.const_poly(one)
-                    for _ in range(k):
-                        result = result.MUL_PP_P(base_poly)
+                    if is_x_poly:
+                        # строим x^k напрямую
+                        zero = RationalModule(IntegerModule(0, 0, [0]), NaturalModule(0, [1]))
+                        one = RationalModule(IntegerModule(0, 0, [1]), NaturalModule(0, [1]))
+                        coeffs = [zero] * k + [one]
+                        result = RealModule(k, coeffs)
+                    else:
+                        result = self.poly_pow(base_poly, k)
 
                     stack.append(result)
                     continue
